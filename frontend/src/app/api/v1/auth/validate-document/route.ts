@@ -52,9 +52,9 @@ export async function POST(req: NextRequest) {
       data: { found: false, message: 'Cliente no encontrado en el sistema' },
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
+    console.error('validate-document error:', error);
     return NextResponse.json(
-      { status: 'error', errors: [{ message: msg, code: 'INTERNAL_ERROR' }] },
+      { status: 'error', errors: [{ message: 'Error interno del servidor', code: 'INTERNAL_ERROR' }] },
       { status: 500 }
     );
   }
