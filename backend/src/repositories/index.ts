@@ -1,0 +1,13 @@
+export * as userRepository from './user.repository.js';
+export * as clientRepository from './client.repository.js';
+export * as orderRepository from './order.repository.js';
+export * as requestRepository from './request.repository.js';
+export * as documentRepository from './document.repository.js';
+export * as notificationRepository from './notification.repository.js';
+export * as testimonialRepository from './testimonial.repository.js';
+export * as analyticsRepository from './analytics.repository.js';
+export * as auditRepository from './audit.repository.js';
+export * as chatbotRepository from './chatbot.repository.js';
+export * as whatsappRepository from './whatsapp.repository.js';
+export * as webhookRepository from './webhook.repository.js';
+export * as otpRepository from './otp.repository.js';

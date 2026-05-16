@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <defs>
+    <linearGradient id="sbg" x1="0" y1="80" x2="80" y2="0">
+      <stop offset="0%" stop-color="#00D4AA"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="18" fill="url(#sbg)"/>
+  <!-- Globe -->
+  <circle cx="40" cy="38" r="18" stroke="white" stroke-width="1.5" opacity="0.85" fill="none"/>
+  <ellipse cx="40" cy="38" rx="8" ry="18" stroke="white" stroke-width="0.8" opacity="0.4" fill="none"/>
+  <line x1="22" y1="38" x2="58" y2="38" stroke="white" stroke-width="0.8" opacity="0.4"/>
+  <path d="M24 29 Q40 25, 56 29" stroke="white" stroke-width="0.7" opacity="0.3" fill="none"/>
+  <path d="M24 47 Q40 51, 56 47" stroke="white" stroke-width="0.7" opacity="0.3" fill="none"/>
+  <!-- Leaf -->
+  <path d="M40 20 C40 20, 54 10, 60 17 C66 24, 54 32, 40 20Z" fill="white" opacity="0.9"/>
+  <path d="M40 20 C48 15, 54 13, 58 18" stroke="url(#sbg)" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Circuit nodes on globe -->
+  <circle cx="33" cy="33" r="2" fill="#00D4AA"/>
+  <circle cx="47" cy="35" r="2" fill="#00D4AA"/>
+  <circle cx="38" cy="46" r="2" fill="#00D4AA"/>
+  <line x1="33" y1="33" x2="47" y2="35" stroke="white" stroke-width="0.8" opacity="0.5"/>
+  <line x1="47" y1="35" x2="38" y2="46" stroke="white" stroke-width="0.8" opacity="0.5"/>
+  <line x1="33" y1="33" x2="38" y2="46" stroke="white" stroke-width="0.8" opacity="0.5"/>
+  <!-- Recycle arrows -->
+  <path d="M30 62 L34 58 L34 66Z" fill="white" opacity="0.5"/>
+  <path d="M46 62 L50 58 L50 66Z" fill="white" opacity="0.5"/>
+  <path d="M34 62 Q40 59, 46 62" stroke="white" stroke-width="0.8" opacity="0.4" fill="none"/>
+  <path d="M50 62 Q54 60, 56 62" stroke="white" stroke-width="0.8" opacity="0.4" fill="none"/>
+</svg>

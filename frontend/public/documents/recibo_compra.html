@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Recibo de Compra</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 40px auto; padding: 30px; color: #1A1A1A; background: #fff; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #C4956A; padding-bottom: 20px; margin-bottom: 25px; }
+  .logo { font-size: 24px; font-weight: 800; color: #1A1A1A; }
+  .logo span { color: #C4956A; }
+  .subtitle { font-size: 11px; color: #8B6F5E; margin-top: 2px; }
+  .receipt-info { text-align: right; font-size: 12px; color: #666; }
+  .receipt-num { font-size: 18px; font-weight: 700; color: #C4956A; }
+  h2 { font-size: 16px; color: #1A1A1A; margin: 20px 0 10px; border-bottom: 1px solid #EDE8E2; padding-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th { background: #FAF8F5; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; color: #8B6F5E; letter-spacing: 1px; border-bottom: 2px solid #EDE8E2; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F5EDE4; font-size: 13px; }
+  .total-row td { font-weight: 700; font-size: 15px; border-top: 2px solid #C4956A; background: #FAF8F5; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
+  .info-box { background: #FAF8F5; padding: 12px; border-radius: 8px; }
+  .info-label { font-size: 10px; text-transform: uppercase; color: #8B6F5E; letter-spacing: 1px; }
+  .info-value { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #EDE8E2; font-size: 11px; color: #999; text-align: center; }
+  .stamp { display: inline-block; border: 2px solid #27AE60; color: #27AE60; padding: 5px 15px; border-radius: 4px; font-weight: 700; font-size: 12px; transform: rotate(-5deg); margin-top: 15px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div><div class="logo">UrbanThread <span>AI</span></div><div class="subtitle">Tejiendo experiencias inteligentes</div></div>
+    <div class="receipt-info"><div class="receipt-num">REC-80178335</div><div>Fecha: 17/06/2023</div><div>Hora: 09:14 AM</div></div>
+  </div>
+  <h2>Comprobante de Compra</h2>
+  <div class="info-grid">
+    <div class="info-box"><div class="info-label">Cliente</div><div class="info-value">Rosalba Martínez</div></div>
+    <div class="info-box"><div class="info-label">Documento</div><div class="info-value">CC 32.665.847</div></div>
+    <div class="info-box"><div class="info-label">Método de Pago</div><div class="info-value">Pago en Línea</div></div>
+    <div class="info-box"><div class="info-label">Referencia</div><div class="info-value">2142768419</div></div>
+  </div>
+  <h2>Detalle de Productos</h2>
+  <table>
+    <thead><tr><th>Producto</th><th>Talla</th><th>Color</th><th>Cant.</th><th style="text-align:right">Valor</th></tr></thead>
+    <tbody>
+      <tr><td>Camiseta Premium UrbanThread</td><td>M</td><td>Blanco</td><td>2</td><td style="text-align:right">$ 179.800</td></tr>
+      <tr><td>Pantalón Slim Fit Eco</td><td>32</td><td>Azul Oscuro</td><td>1</td><td style="text-align:right">$ 159.900</td></tr>
+      <tr><td>Sneakers Urban Edition</td><td>42</td><td>Negro</td><td>1</td><td style="text-align:right">$ 189.900</td></tr>
+      <tr class="total-row"><td colspan="4">TOTAL</td><td style="text-align:right">$ 529.600</td></tr>
+    </tbody>
+  </table>
+  <div style="text-align:center"><div class="stamp">✓ PAGADO</div></div>
+  <div class="footer">
+    <p>UrbanThread AI — NIT: 899.999.007-0 — Bogotá, Colombia</p>
+    <p>Soporte: contacto@urbanthread.ai — Tel: +57 300 123 4567</p>
+  </div>
+</body>
+</html>

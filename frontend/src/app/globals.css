@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   UrbanThread AI — Design System Tokens
+   ============================================ */
+
+@layer base {
+  :root {
+    /* ---- Color Palette (Fashion E-commerce - Warm & Elegant) ---- */
+    --ut-primary: #1A1A1A;
+    --ut-primary-light: #2D2D2D;
+    --ut-accent: #C4956A;
+    --ut-accent-hover: #B07D52;
+    --ut-gold: #D4A76A;
+    --ut-electric: #8B6F5E;
+    --ut-surface: #FAF8F5;
+    --ut-surface-dark: #EDE8E2;
+    --ut-text: #1A1A1A;
+    --ut-text-muted: #8A8580;
+    --ut-danger: #D94F4F;
+    --ut-warning: #E8A54B;
+    --ut-success: #5B9A6F;
+    --ut-info: #6B8CAE;
+
+    /* ---- Spacing Scale ---- */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+
+    /* ---- Border Radius ---- */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* ---- Shadows ---- */
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-elevated: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
+
+    /* ---- Transitions ---- */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* ---- Z-Index Scale ---- */
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-overlay: 30;
+    --z-modal: 40;
+    --z-toast: 50;
+    --z-chatbot: 60;
+  }
+
+  /* ---- Base Typography ---- */
+  html {
+    font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+    color: var(--ut-text);
+    background-color: var(--ut-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    line-height: 1.6;
+    background-color: var(--ut-surface);
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(0, 212, 170, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(108, 92, 231, 0.04) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700' viewBox='0 0 700 700'%3E%3Crect width='700' height='700' fill='none'/%3E%3Ccircle cx='50' cy='50' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='200' cy='30' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='350' cy='70' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='500' cy='40' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='650' cy='60' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='120' cy='180' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='280' cy='160' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='430' cy='190' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='580' cy='170' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='70' cy='320' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='220' cy='300' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='370' cy='330' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='520' cy='310' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='670' cy='340' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='140' cy='460' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='300' cy='440' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='450' cy='470' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='600' cy='450' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='60' cy='590' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='210' cy='570' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='360' cy='600' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Ccircle cx='510' cy='580' r='3.5' fill='%23b0bec5' opacity='0.45'/%3E%3Ccircle cx='660' cy='610' r='3' fill='%23b0bec5' opacity='0.5'/%3E%3Cline x1='50' y1='50' x2='200' y2='30' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='200' y1='30' x2='350' y2='70' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='350' y1='70' x2='500' y2='40' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='500' y1='40' x2='650' y2='60' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='50' y1='50' x2='120' y2='180' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='200' y1='30' x2='280' y2='160' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='350' y1='70' x2='430' y2='190' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='500' y1='40' x2='580' y2='170' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='650' y1='60' x2='580' y2='170' stroke='%23cfd8dc' stroke-width='1' opacity='0.4'/%3E%3Cline x1='120' y1='180' x2='280' y2='160' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='280' y1='160' x2='430' y2='190' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='430' y1='190' x2='580' y2='170' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='120' y1='180' x2='70' y2='320' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='280' y1='160' x2='220' y2='300' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='430' y1='190' x2='370' y2='330' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='580' y1='170' x2='520' y2='310' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='70' y1='320' x2='220' y2='300' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='220' y1='300' x2='370' y2='330' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='370' y1='330' x2='520' y2='310' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='520' y1='310' x2='670' y2='340' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='70' y1='320' x2='140' y2='460' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='220' y1='300' x2='300' y2='440' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='370' y1='330' x2='450' y2='470' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='520' y1='310' x2='600' y2='450' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='670' y1='340' x2='600' y2='450' stroke='%23cfd8dc' stroke-width='1' opacity='0.4'/%3E%3Cline x1='140' y1='460' x2='300' y2='440' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='300' y1='440' x2='450' y2='470' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='450' y1='470' x2='600' y2='450' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='140' y1='460' x2='60' y2='590' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='300' y1='440' x2='210' y2='570' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='450' y1='470' x2='360' y2='600' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='600' y1='450' x2='510' y2='580' stroke='%23cfd8dc' stroke-width='1' opacity='0.5'/%3E%3Cline x1='60' y1='590' x2='210' y2='570' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='210' y1='570' x2='360' y2='600' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='360' y1='600' x2='510' y2='580' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='510' y1='580' x2='660' y2='610' stroke='%23cfd8dc' stroke-width='1' opacity='0.6'/%3E%3Cline x1='200' y1='30' x2='430' y2='190' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='120' y1='180' x2='370' y2='330' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='280' y1='160' x2='520' y2='310' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='70' y1='320' x2='300' y2='440' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='220' y1='300' x2='450' y2='470' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='370' y1='330' x2='600' y2='450' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='140' y1='460' x2='360' y2='600' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3Cline x1='300' y1='440' x2='510' y2='580' stroke='%23cfd8dc' stroke-width='0.7' opacity='0.3'/%3E%3C/svg%3E");
+    background-size: auto, auto, 700px 700px;
+  }
+
+  /* ---- Heading Hierarchy ---- */
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  code,
+  pre {
+    font-family: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+@layer components {
+  /* Glass morphism card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* Gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, var(--ut-primary) 0%, var(--ut-primary-light) 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, var(--ut-accent) 0%, var(--ut-electric) 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, var(--ut-gold) 0%, #F0A040 100%);
+  }
+
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--ut-accent) 0%, var(--ut-electric) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Focus ring for accessibility */
+  .focus-ring {
+    @apply outline-none ring-2 ring-ut-accent ring-offset-2 ring-offset-white;
+  }
+}
+
+/* ============================================
+   Scrollbar Styling — Premium Fashion with Shimmer
+   ============================================ */
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #FAF8F5 0%, #F5EDE4 50%, #FAF8F5 100%);
+    border-left: 1px solid rgba(196, 149, 106, 0.15);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: 
+      linear-gradient(180deg, 
+        #D4A76A 0%, 
+        #C4956A 20%, 
+        #E8C496 40%, 
+        #C4956A 60%, 
+        #8B6F5E 80%, 
+        #C4956A 100%
+      );
+    border-radius: 10px;
+    border: 2px solid rgba(250, 248, 245, 0.8);
+    box-shadow: 
+      0 0 10px rgba(196, 149, 106, 0.4),
+      0 0 20px rgba(196, 149, 106, 0.2),
+      inset 0 0 6px rgba(255, 255, 255, 0.3);
+    background-size: 100% 200%;
+    animation: scrollbar-shimmer 3s ease-in-out infinite;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: 
+      linear-gradient(180deg, 
+        #E8C496 0%, 
+        #D4A76A 20%, 
+        #ffffff 40%, 
+        #D4A76A 60%, 
+        #C4956A 80%, 
+        #D4A76A 100%
+      );
+    background-size: 100% 200%;
+    box-shadow: 
+      0 0 15px rgba(212, 167, 106, 0.6),
+      0 0 30px rgba(196, 149, 106, 0.3),
+      inset 0 0 8px rgba(255, 255, 255, 0.4);
+    animation: scrollbar-shimmer 1.5s ease-in-out infinite;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: 
+      linear-gradient(180deg, 
+        #ffffff 0%, 
+        #E8C496 30%, 
+        #D4A76A 50%, 
+        #E8C496 70%, 
+        #ffffff 100%
+      );
+    background-size: 100% 200%;
+    box-shadow: 
+      0 0 25px rgba(232, 196, 150, 0.8),
+      0 0 50px rgba(196, 149, 106, 0.4),
+      inset 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: scrollbar-shimmer 0.8s ease-in-out infinite;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #FAF8F5;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #C4956A #FAF8F5;
+  }
+}
+
+@keyframes scrollbar-shimmer {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 0% 100%; }
+}
+
+/* Scrolling row animation for carousel backgrounds */
+@keyframes scroll-row {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll-row {
+  animation: scroll-row 30s linear infinite;
+}

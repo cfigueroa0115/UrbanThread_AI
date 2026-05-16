@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="80" x2="80" y2="0">
+      <stop offset="0%" stop-color="#00D4AA"/>
+      <stop offset="100%" stop-color="#0A1628"/>
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="18" fill="url(#bg)"/>
+  <!-- Buildings -->
+  <rect x="14" y="30" width="7" height="30" rx="1.5" fill="white" opacity="0.9"/>
+  <rect x="14" y="33" width="7" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="14" y="38" width="7" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="14" y="43" width="7" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="24" y="22" width="8" height="38" rx="1.5" fill="white" opacity="0.95"/>
+  <rect x="24" y="25" width="8" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="24" y="30" width="8" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="24" y="35" width="8" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="24" y="40" width="8" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="35" y="34" width="7" height="26" rx="1.5" fill="white" opacity="0.85"/>
+  <rect x="35" y="37" width="7" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <rect x="35" y="42" width="7" height="2" rx="0.5" fill="url(#bg)" opacity="0.3"/>
+  <!-- Network nodes -->
+  <circle cx="52" cy="22" r="4.5" fill="#00D4AA"/>
+  <circle cx="66" cy="32" r="3.5" fill="white" opacity="0.8"/>
+  <circle cx="58" cy="44" r="4" fill="#00D4AA" opacity="0.9"/>
+  <circle cx="48" cy="54" r="3" fill="white" opacity="0.7"/>
+  <circle cx="68" cy="52" r="3" fill="white" opacity="0.6"/>
+  <circle cx="60" cy="16" r="2.5" fill="white" opacity="0.5"/>
+  <!-- Network connections -->
+  <line x1="52" y1="22" x2="66" y2="32" stroke="white" stroke-width="1.2" opacity="0.5"/>
+  <line x1="66" y1="32" x2="58" y2="44" stroke="white" stroke-width="1.2" opacity="0.5"/>
+  <line x1="58" y1="44" x2="48" y2="54" stroke="white" stroke-width="1" opacity="0.4"/>
+  <line x1="58" y1="44" x2="68" y2="52" stroke="white" stroke-width="1" opacity="0.4"/>
+  <line x1="52" y1="22" x2="58" y2="44" stroke="white" stroke-width="0.8" opacity="0.3"/>
+  <line x1="52" y1="22" x2="60" y2="16" stroke="white" stroke-width="1" opacity="0.4"/>
+  <line x1="60" y1="16" x2="66" y2="32" stroke="white" stroke-width="0.8" opacity="0.3"/>
+  <!-- Data flow from buildings -->
+  <line x1="35" y1="36" x2="48" y2="54" stroke="#00D4AA" stroke-width="0.8" opacity="0.4" stroke-dasharray="2 2"/>
+  <line x1="32" y1="26" x2="52" y2="22" stroke="#00D4AA" stroke-width="0.8" opacity="0.4" stroke-dasharray="2 2"/>
+  <!-- Ground -->
+  <line x1="10" y1="60" x2="45" y2="60" stroke="white" stroke-width="1" opacity="0.3"/>
+</svg>

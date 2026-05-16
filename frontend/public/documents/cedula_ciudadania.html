@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><title>Documento de Identidad</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 40px auto; padding: 30px; color: #1A1A1A; background: #fff; }
+  .card { border: 2px solid #C4956A; border-radius: 16px; overflow: hidden; max-width: 500px; margin: 0 auto; }
+  .card-header { background: linear-gradient(135deg, #1A1A1A, #2D2D2D); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .card-header h3 { color: white; font-size: 14px; margin: 0; }
+  .card-header .logo { color: #C4956A; font-weight: 800; font-size: 16px; }
+  .card-body { padding: 25px; background: linear-gradient(135deg, #FAF8F5, #F5EDE4); }
+  .photo-section { display: flex; gap: 20px; align-items: flex-start; }
+  .photo { width: 100px; height: 120px; background: #EDE8E2; border-radius: 10px; border: 2px solid #C4956A; display: flex; align-items: center; justify-content: center; }
+  .photo svg { width: 50px; height: 50px; color: #C4956A; }
+  .info { flex: 1; }
+  .field { margin-bottom: 12px; }
+  .field-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #8B6F5E; font-weight: 600; }
+  .field-value { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .card-footer { background: #1A1A1A; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .card-footer span { color: #C4956A; font-size: 11px; font-weight: 600; }
+  .barcode { display: flex; gap: 2px; align-items: flex-end; }
+  .barcode div { background: white; width: 2px; }
+  .badge { display: inline-block; background: #27AE60; color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-top: 8px; }
+  .title { text-align: center; margin-bottom: 25px; }
+  .title h2 { font-size: 18px; color: #1A1A1A; margin: 0; }
+  .title p { font-size: 12px; color: #8B6F5E; }
+  .note { text-align: center; margin-top: 20px; font-size: 11px; color: #999; }
+</style>
+</head>
+<body>
+  <div class="title">
+    <h2>Copia Digital — Documento de Identidad</h2>
+    <p>Registrado en plataforma UrbanThread AI</p>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h3>REPÚBLICA DE COLOMBIA</h3>
+      <div class="logo">UT<span style="color:white">AI</span></div>
+    </div>
+    <div class="card-body">
+      <div class="photo-section">
+        <div class="photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="5"/><path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9"/></svg>
+        </div>
+        <div class="info">
+          <div class="field"><div class="field-label">Nombres</div><div class="field-value">Sergio</div></div>
+          <div class="field"><div class="field-label">Apellidos</div><div class="field-value">Cruz Díaz</div></div>
+          <div class="field"><div class="field-label">Documento</div><div class="field-value">CC 484.857.644</div></div>
+          <div class="field"><div class="field-label">Fecha de Nacimiento</div><div class="field-value">15/03/1992</div></div>
+          <div class="badge">✓ VERIFICADO</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span>Expedido: Bogotá, Colombia</span>
+      <div class="barcode">
+        <div style="height:20px"></div><div style="height:15px"></div><div style="height:20px"></div><div style="height:10px"></div>
+        <div style="height:20px"></div><div style="height:18px"></div><div style="height:12px"></div><div style="height:20px"></div>
+        <div style="height:8px"></div><div style="height:20px"></div><div style="height:15px"></div><div style="height:20px"></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <p>Este documento es una copia digital para uso exclusivo en la plataforma UrbanThread AI.</p>
+    <p>Verificado electrónicamente — No requiere firma autógrafa.</p>
+  </div>
+</body>
+</html>
