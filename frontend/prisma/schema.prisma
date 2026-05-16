@@ -1,0 +1,652 @@
+// UrbanThread AI — Esquema completo de base de datos
+// 32 tablas con relaciones de integridad referencial
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Usuarios y Autenticación
+// ============================================================
+
+// Tabla: users
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  roleId       String    @map("role_id")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  role         Role      @relation(fields: [roleId], references: [id])
+  sessions     Session[]
+  administrator Administrator?
+  auditLogs    AuditLog[]
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+// Tabla: roles
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  isSystem    Boolean          @default(false) @map("is_system")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  users       User[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+// Tabla: permissions
+model Permission {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  resource    String
+  action      String           // "create" | "read" | "update" | "delete"
+  description String?
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  roles       RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+// Tabla pivote: role_permissions
+model RolePermission {
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// Tabla: sessions
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("sessions")
+}
+
+// Tabla: administrators
+model Administrator {
+  id         String   @id @default(uuid())
+  userId     String   @unique @map("user_id")
+  department String?
+  position   String?
+  phone      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("administrators")
+}
+
+// ============================================================
+// Clientes
+// ============================================================
+
+// Tabla: clients
+model Client {
+  id             String    @id @default(uuid())
+  documentType   String    @map("document_type")
+  documentNumber String    @map("document_number")
+  firstName      String    @map("first_name")
+  lastName       String    @map("last_name")
+  dateOfBirth    DateTime? @map("date_of_birth")
+  gender         String?
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  documents            ClientDocument[]
+  addresses            ClientAddress[]
+  emails               ClientEmail[]
+  phones               ClientPhone[]
+  profile              CustomerProfile?
+  orders               Order[]
+  requests             Request[]
+  otpCodes             OtpCode[]
+  notifications        Notification[]
+  whatsappMessages     WhatsappMessage[]
+  chatbotConversations ChatbotConversation[]
+  purchases            Purchase[]
+  attachedFiles        AttachedFile[]
+
+  @@unique([documentType, documentNumber])
+  @@index([documentType, documentNumber])
+  @@map("clients")
+}
+
+// Tabla: document_types
+model DocumentType {
+  id          String   @id @default(uuid())
+  code        String   @unique // "CC", "CE", "NIT", "PP", "TI"
+  name        String           // "Cédula de Ciudadanía", etc.
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  clientDocuments ClientDocument[]
+
+  @@map("document_types")
+}
+
+// Tabla: client_documents
+model ClientDocument {
+  id             String       @id @default(uuid())
+  clientId       String       @map("client_id")
+  documentTypeId String       @map("document_type_id")
+  fileName       String       @map("file_name")
+  filePath       String       @map("file_path")
+  fileSize       Int          @map("file_size")
+  mimeType       String       @map("mime_type")
+  status         String       @default("active") // "active" | "archived" | "deleted"
+  uploadedBy     String?      @map("uploaded_by")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  client       Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  documentType DocumentType @relation(fields: [documentTypeId], references: [id])
+
+  @@index([clientId])
+  @@map("client_documents")
+}
+
+// Tabla: client_addresses
+model ClientAddress {
+  id         String   @id @default(uuid())
+  clientId   String   @map("client_id")
+  type       String   // "home" | "work" | "billing" | "shipping"
+  street     String
+  city       String
+  state      String
+  postalCode String?  @map("postal_code")
+  country    String   @default("Colombia")
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@map("client_addresses")
+}
+
+// Tabla: client_emails
+model ClientEmail {
+  id         String   @id @default(uuid())
+  clientId   String   @map("client_id")
+  email      String
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  isVerified Boolean  @default(false) @map("is_verified")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([email])
+  @@map("client_emails")
+}
+
+// Tabla: client_phones
+model ClientPhone {
+  id         String   @id @default(uuid())
+  clientId   String   @map("client_id")
+  phone      String
+  type       String   // "mobile" | "home" | "work"
+  isPrimary  Boolean  @default(false) @map("is_primary")
+  isWhatsapp Boolean  @default(false) @map("is_whatsapp")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@map("client_phones")
+}
+
+// Tabla: customer_profiles
+model CustomerProfile {
+  id                String   @id @default(uuid())
+  clientId          String   @unique @map("client_id")
+  preferredLanguage String?  @default("es") @map("preferred_language")
+  loyaltyPoints     Int      @default(0) @map("loyalty_points")
+  tier              String   @default("standard") // "standard" | "silver" | "gold" | "platinum"
+  notes             String?
+  tags              String[] @default([])
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  client            Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("customer_profiles")
+}
+
+// ============================================================
+// Pedidos (Orders)
+// ============================================================
+
+// Tabla: orders
+model Order {
+  id          String        @id @default(uuid())
+  clientId    String        @map("client_id")
+  orderNumber String        @unique @map("order_number")
+  status      String        @default("pending") // "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled"
+  totalAmount Decimal       @map("total_amount") @db.Decimal(12, 2)
+  currency    String        @default("COP")
+  notes       String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  client        Client        @relation(fields: [clientId], references: [id])
+  items         OrderItem[]
+  statusHistory OrderStatus[]
+  purchases     Purchase[]
+
+  @@index([clientId])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+// Tabla: order_items
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String   @map("order_id")
+  productName String   @map("product_name")
+  description String?
+  quantity    Int
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(12, 2)
+  totalPrice  Decimal  @map("total_price") @db.Decimal(12, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// Tabla: order_status (historial)
+model OrderStatus {
+  id        String   @id @default(uuid())
+  orderId   String   @map("order_id")
+  status    String
+  comment   String?
+  changedBy String?  @map("changed_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_status")
+}
+
+// ============================================================
+// Solicitudes / Radicación (Requests)
+// ============================================================
+
+// Tabla: requests
+model Request {
+  id               String          @id @default(uuid())
+  clientId         String          @map("client_id")
+  radicationNumber String          @unique @map("radication_number")
+  type             String
+  description      String
+  priority         String          @default("medium") // "low" | "medium" | "high" | "urgent"
+  status           String          @default("registered") // "registered" | "in_review" | "in_progress" | "pending_info" | "resolved" | "closed" | "cancelled"
+  assignedTo       String?         @map("assigned_to")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  client        Client          @relation(fields: [clientId], references: [id])
+  statusHistory RequestStatus[]
+  attachedFiles AttachedFile[]
+
+  @@index([clientId])
+  @@index([radicationNumber])
+  @@map("requests")
+}
+
+// Tabla: request_status (historial)
+model RequestStatus {
+  id        String   @id @default(uuid())
+  requestId String   @map("request_id")
+  status    String
+  comment   String?
+  changedBy String?  @map("changed_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@map("request_status")
+}
+
+// Tabla: attached_files
+model AttachedFile {
+  id           String   @id @default(uuid())
+  requestId    String?  @map("request_id")
+  clientId     String?  @map("client_id")
+  fileName     String   @map("file_name")
+  filePath     String   @map("file_path")
+  fileSize     Int      @map("file_size")
+  mimeType     String   @map("mime_type")
+  documentType String?  @map("document_type")
+  status       String   @default("active")
+  uploadedBy   String?  @map("uploaded_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  request      Request? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  client       Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([requestId])
+  @@index([clientId])
+  @@map("attached_files")
+}
+
+// ============================================================
+// Comunicación
+// ============================================================
+
+// Tabla: whatsapp_messages
+model WhatsappMessage {
+  id          String   @id @default(uuid())
+  clientId    String?  @map("client_id")
+  sessionId   String   @map("session_id")
+  direction   String   // "inbound" | "outbound"
+  phoneNumber String   @map("phone_number")
+  content     String
+  messageType String   @default("text") @map("message_type") // "text" | "image" | "document" | "audio"
+  mediaUrl    String?  @map("media_url")
+  intent      String?  // clasificación de intención
+  status      String   @default("received") // "received" | "sent" | "delivered" | "read" | "failed"
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  client      Client?  @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@index([sessionId])
+  @@index([phoneNumber])
+  @@map("whatsapp_messages")
+}
+
+// Tabla: chatbot_conversations
+model ChatbotConversation {
+  id          String           @id @default(uuid())
+  clientId    String?          @map("client_id")
+  sessionId   String           @map("session_id")
+  status      String           @default("active") // "active" | "escalated" | "closed"
+  escalatedAt DateTime?        @map("escalated_at")
+  ticketId    String?          @map("ticket_id")
+  metadata    Json?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  client      Client?          @relation(fields: [clientId], references: [id])
+  messages    ChatbotMessage[]
+
+  @@index([clientId])
+  @@index([sessionId])
+  @@map("chatbot_conversations")
+}
+
+// Tabla: chatbot_messages
+model ChatbotMessage {
+  id             String              @id @default(uuid())
+  conversationId String              @map("conversation_id")
+  role           String              // "user" | "assistant" | "system"
+  content        String
+  tokensUsed     Int?                @map("tokens_used")
+  responseTimeMs Int?                @map("response_time_ms")
+  createdAt      DateTime            @default(now()) @map("created_at")
+
+  conversation   ChatbotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("chatbot_messages")
+}
+
+// ============================================================
+// OTP y Autenticación de Clientes
+// ============================================================
+
+// Tabla: otp_codes
+model OtpCode {
+  id           String    @id @default(uuid())
+  clientId     String    @map("client_id")
+  code         String
+  email        String
+  attempts     Int       @default(0)
+  isUsed       Boolean   @default(false) @map("is_used")
+  expiresAt    DateTime  @map("expires_at")
+  blockedUntil DateTime? @map("blocked_until")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  client       Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([code])
+  @@map("otp_codes")
+}
+
+// ============================================================
+// Auditoría y Logging
+// ============================================================
+
+// Tabla: audit_logs
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  action     String   // "create" | "update" | "delete" | "login" | "logout" | "webhook_failure"
+  resource   String   // nombre de la tabla/recurso afectado
+  resourceId String?  @map("resource_id")
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  result     String   // "success" | "failure"
+  details    Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// Tabla: activity_logs
+model ActivityLog {
+  id          String   @id @default(uuid())
+  userId      String?  @map("user_id")
+  module      String   // "admin" | "portal" | "chatbot" | "whatsapp" | "radicacion" | "analytics"
+  action      String
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([module])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+// ============================================================
+// Notificaciones
+// ============================================================
+
+// Tabla: notifications
+model Notification {
+  id       String    @id @default(uuid())
+  clientId String    @map("client_id")
+  type     String    // "order_status" | "request_status" | "document" | "system" | "promotion"
+  title    String
+  message  String
+  isRead   Boolean   @default(false) @map("is_read")
+  readAt   DateTime? @map("read_at")
+  metadata Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client   Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================================
+// Integraciones
+// ============================================================
+
+// Tabla: integrations
+model Integration {
+  id         String    @id @default(uuid())
+  name       String    @unique // "n8n" | "whatsapp" | "openai" | "smtp"
+  type       String    // "webhook" | "api" | "smtp"
+  config     Json      // configuración cifrada
+  isActive   Boolean   @default(true) @map("is_active")
+  lastSyncAt DateTime? @map("last_sync_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@map("integrations")
+}
+
+// ============================================================
+// Analítica
+// ============================================================
+
+// Tabla: analytics_events
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  eventType String   @map("event_type") // "page_visit" | "click" | "form_submit" | "chatbot_interaction" | "purchase" | "login"
+  userId    String?  @map("user_id")
+  sessionId String?  @map("session_id")
+  page      String?
+  element   String?
+  metadata  Json?
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  device    String?  // "mobile" | "tablet" | "desktop"
+  source    String?  // "direct" | "organic" | "social" | "referral" | "whatsapp"
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([page])
+  @@map("analytics_events")
+}
+
+// Tabla: page_visits
+model PageVisit {
+  id        String   @id @default(uuid())
+  page      String
+  sessionId String   @map("session_id")
+  userId    String?  @map("user_id")
+  duration  Int?     // segundos
+  referrer  String?
+  device    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([page])
+  @@index([createdAt])
+  @@map("page_visits")
+}
+
+// ============================================================
+// Testimonios y Experiencias de Cliente
+// ============================================================
+
+// Tabla: testimonials
+model Testimonial {
+  id          String   @id @default(uuid())
+  clientName  String   @map("client_name")
+  clientRole  String?  @map("client_role")
+  photoUrl    String?  @map("photo_url")
+  rating      Int      // 1-5
+  comment     String
+  caseStudy   String?  @map("case_study")
+  isPublished Boolean  @default(true) @map("is_published")
+  isFeatured  Boolean  @default(false) @map("is_featured")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("testimonials")
+}
+
+// Tabla: customer_experiences
+model CustomerExperience {
+  id          String   @id @default(uuid())
+  clientName  String   @map("client_name")
+  title       String
+  description String
+  category    String   // "positive" | "agile" | "easy_use" | "personalization" | "fast_response" | "frictionless" | "trust"
+  imageUrl    String?  @map("image_url")
+  isPublished Boolean  @default(true) @map("is_published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("customer_experiences")
+}
+
+// ============================================================
+// Compras (Purchases)
+// ============================================================
+
+// Tabla: purchases
+model Purchase {
+  id            String   @id @default(uuid())
+  clientId      String   @map("client_id")
+  orderId       String?  @map("order_id")
+  amount        Decimal  @db.Decimal(12, 2)
+  currency      String   @default("COP")
+  paymentMethod String?  @map("payment_method")
+  status        String   @default("completed") // "completed" | "refunded" | "cancelled"
+  transactionId String?  @map("transaction_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  client        Client   @relation(fields: [clientId], references: [id])
+  order         Order?   @relation(fields: [orderId], references: [id])
+
+  @@index([clientId])
+  @@index([createdAt])
+  @@map("purchases")
+}
