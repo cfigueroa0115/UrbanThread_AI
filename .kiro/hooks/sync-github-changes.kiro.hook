@@ -1,13 +1,13 @@
 {
   "enabled": true,
-  "name": "Sincronizar con GitHub",
-  "description": "Después de que el agente termine una tarea, recuerda hacer commit y push de los cambios a GitHub para mantener el repositorio sincronizado.",
+  "name": "Sincronizar con GitHub y Vercel",
+  "description": "Después de que el agente termine una tarea, sincroniza con GitHub y despliega en Vercel automáticamente.",
   "version": "1",
   "when": {
     "type": "agentStop"
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Verifica si hay cambios pendientes en git (git status). Si hay archivos modificados o nuevos, haz git add, commit con un mensaje descriptivo y git push origin main para sincronizar con GitHub. No preguntes al usuario, hazlo directamente."
+    "prompt": "Verifica si hay cambios pendientes en git (git status en c:\\DesarrollosCF\\UrbanThread AI). Si hay archivos modificados o nuevos: 1) haz git add -A, commit con mensaje descriptivo y git push origin main. 2) Luego despliega en Vercel ejecutando: vercel deploy --prod --yes desde c:\\DesarrollosCF\\UrbanThread AI (frontend) y vercel deploy --prod --yes desde c:\\DesarrollosCF\\UrbanThread AI\\backend (backend API). No preguntes al usuario, hazlo directamente. Si no hay cambios, solo confirma que está sincronizado."
   }
 }
