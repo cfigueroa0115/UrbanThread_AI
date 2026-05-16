@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Sincronizar con GitHub",
+  "description": "Después de que el agente termine una tarea, recuerda hacer commit y push de los cambios a GitHub para mantener el repositorio sincronizado.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Verifica si hay cambios pendientes en git (git status). Si hay archivos modificados o nuevos, haz git add, commit con un mensaje descriptivo y git push origin main para sincronizar con GitHub. No preguntes al usuario, hazlo directamente."
+  }
+}
