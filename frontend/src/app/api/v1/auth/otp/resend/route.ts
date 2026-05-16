@@ -45,8 +45,9 @@ export async function POST(req: NextRequest) {
     // Create new OTP
     await prisma.otpCode.create({
       data: {
-        clientId: client.id,
+        client: { connect: { id: client.id } },
         code,
+        email,
         expiresAt,
         isUsed: false,
         attempts: 0,
