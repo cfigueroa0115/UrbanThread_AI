@@ -16,14 +16,23 @@ async function getClientIdFromToken(req: NextRequest): Promise<string | null> {
 export async function GET(req: NextRequest) {
   try {
     const clientId = await getClientIdFromToken(req);
-    if (!clientId) {
+    
+    // Also check query param clientId as fallback
+    const url = new URL(req.url);
+    const queryClientId = url.searchParams.get('clientId');
+    const effectiveClientId = clientId || queryClientId;
+
+    if (!effectiveClientId) {
       return NextResponse.json({ status: 'success', data: [], meta: { total: 0 } });
     }
 
     const requests = await prisma.request.findMany({
-      where: { clientId },
+      where: { clientId: effectiveClientId },
       orderBy: { createdAt: 'desc' },
-      include: { statusHistory: { orderBy: { createdAt: 'desc' } } },
+      include: {
+        statusHistory: { orderBy: { createdAt: 'desc' } },
+        attachedFiles: true,
+      },
     });
 
     return NextResponse.json({ status: 'success', data: requests, meta: { total: requests.length } });
