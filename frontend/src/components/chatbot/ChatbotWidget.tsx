@@ -135,25 +135,34 @@ export function ChatbotWidget() {
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.lang = 'es-CO';
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
+
+      let silenceTimer: ReturnType<typeof setTimeout> | null = null;
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = Array.from(event.results)
           .map(result => result[0].transcript)
           .join('');
         setInput(transcript);
-        // If final result, send the message
+
+        // Reset silence timer on each result
+        if (silenceTimer) clearTimeout(silenceTimer);
+
+        // If we have a final result, wait 1.5s of silence then send
         if (event.results[event.results.length - 1].isFinal) {
-          const finalText = transcript.trim();
-          if (finalText) {
-            setTimeout(() => {
-              setInput('');
-              sendMessage(finalText);
-            }, 300);
-          }
-          setIsListening(false);
+          silenceTimer = setTimeout(() => {
+            const finalText = transcript.trim();
+            if (finalText) {
+              recognition.stop();
+              setIsListening(false);
+              setTimeout(() => {
+                setInput('');
+                sendMessage(finalText);
+              }, 200);
+            }
+          }, 1500); // Wait 1.5 seconds of silence before sending
         }
       };
 
@@ -204,9 +213,7 @@ export function ChatbotWidget() {
     if (messages.length > lastMessageCountRef.current) {
       const lastMsg = messages[messages.length - 1];
       if (lastMsg && lastMsg.role === 'assistant') {
-        // Add continuity phrase at the end for a warm conversational flow
-        const textToSpeak = lastMsg.content + '... ¿Puedo ayudarte en algo más?';
-        speakText(textToSpeak);
+        speakText(lastMsg.content);
       }
     }
     lastMessageCountRef.current = messages.length;
