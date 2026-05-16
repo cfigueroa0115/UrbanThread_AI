@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
         lastName: true,
         documentType: true,
         documentNumber: true,
-        email: true,
+        emails: { where: { isPrimary: true }, select: { email: true }, take: 1 },
       },
     });
 
     if (client) {
       // Mask email
-      const email = client.email || '';
-      const [user, domain] = email.split('@');
+      const primaryEmail = client.emails[0]?.email || '';
+      const [user, domain] = primaryEmail.split('@');
       const maskedEmail = user
         ? `${user.substring(0, 2)}${'*'.repeat(Math.max(0, user.length - 2))}@${domain || ''}`
         : '';
