@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
         phones: true,
         addresses: true,
         profile: true,
+        documents: { orderBy: { createdAt: 'desc' } },
         orders: { orderBy: { createdAt: 'desc' }, take: 10 },
         requests: { orderBy: { createdAt: 'desc' }, take: 10 },
       },
