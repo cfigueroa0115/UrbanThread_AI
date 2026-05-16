@@ -9,7 +9,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
 
   // Database
-  DATABASE_URL: z.string().url().default('postgresql://postgres:postgres@localhost:5432/urbanthread'),
+  DATABASE_URL: z.string().min(1).default('postgresql://postgres:postgres@localhost:5432/urbanthread'),
 
   // JWT
   JWT_SECRET: z.string().min(16).default('dev-jwt-secret-change-in-production'),
@@ -39,7 +39,7 @@ const envSchema = z.object({
   WHATSAPP_VERIFY_TOKEN: z.string().default(''),
 
   // n8n
-  N8N_WEBHOOK_BASE_URL: z.string().url().default('http://localhost:5678'),
+  N8N_WEBHOOK_BASE_URL: z.string().default('http://localhost:5678'),
 
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(15 * 60 * 1000),

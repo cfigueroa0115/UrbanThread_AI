@@ -3,10 +3,14 @@
   "builds": [
     {
       "src": "api/index.ts",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["src/**", "prisma/**", "../shared/**"]
+      }
     }
   ],
   "rewrites": [
-    { "source": "/api/v1/(.*)", "destination": "/api" }
+    { "source": "/api/v1/(.*)", "destination": "/api" },
+    { "source": "/api/(.*)", "destination": "/api" }
   ]
 }
