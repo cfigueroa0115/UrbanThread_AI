@@ -93,9 +93,12 @@ app.use(errorHandler);
 
 const PORT = env.PORT;
 
-app.listen(PORT, () => {
-  console.log(`🚀 UrbanThread AI backend running on http://localhost:${PORT}`);
-  console.log(`   Environment: ${env.NODE_ENV}`);
-});
+// Only listen when not running as serverless function (Vercel)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 UrbanThread AI backend running on http://localhost:${PORT}`);
+    console.log(`   Environment: ${env.NODE_ENV}`);
+  });
+}
 
 export default app;
