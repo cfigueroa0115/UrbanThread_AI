@@ -6,6 +6,64 @@ UrbanThread AI es una plataforma de comercio electrónico premium enfocada en mo
 
 ---
 
+## 🌐 URLs de Producción
+
+### Aplicaciones principales
+
+| Componente | URL |
+|---|---|
+| **Frontend (Producción)** | https://urban-thread-ai-frontend-wine.vercel.app |
+| **Backend API** | https://urban-thread-ai-backend-tau.vercel.app |
+| **GitHub (Repositorio)** | https://github.com/cfigueroa0115/UrbanThread_AI |
+| **Vercel Dashboard (Frontend)** | https://vercel.com/carlos-figueroas-projects-77a0a373/urban-thread-ai-frontend |
+| **Vercel Dashboard (Backend)** | https://vercel.com/carlos-figueroas-projects-77a0a373/urban-thread-ai-backend |
+| **Neon DB (PostgreSQL)** | https://console.neon.tech |
+| **n8n Webhook** | https://segurobolivar-trial.app.n8n.cloud/webhook/numero_de_identifica |
+
+### Páginas del sitio
+
+| Página | URL |
+|---|---|
+| Inicio | https://urban-thread-ai-frontend-wine.vercel.app |
+| Quiénes Somos | https://urban-thread-ai-frontend-wine.vercel.app/quienes-somos |
+| Sostenibilidad | https://urban-thread-ai-frontend-wine.vercel.app/sostenibilidad |
+| Servicios | https://urban-thread-ai-frontend-wine.vercel.app/servicios |
+| Testimonios | https://urban-thread-ai-frontend-wine.vercel.app/testimonios |
+| Contacto | https://urban-thread-ai-frontend-wine.vercel.app/contacto |
+| Portal Cliente (Login) | https://urban-thread-ai-frontend-wine.vercel.app/cliente/login |
+| Portal Cliente | https://urban-thread-ai-frontend-wine.vercel.app/portal |
+| Perfil | https://urban-thread-ai-frontend-wine.vercel.app/portal/perfil |
+| Pedidos | https://urban-thread-ai-frontend-wine.vercel.app/portal/pedidos |
+| Solicitudes | https://urban-thread-ai-frontend-wine.vercel.app/portal/solicitudes |
+| Radicación | https://urban-thread-ai-frontend-wine.vercel.app/portal/radicacion |
+| Documentos | https://urban-thread-ai-frontend-wine.vercel.app/portal/documentos |
+| Notificaciones | https://urban-thread-ai-frontend-wine.vercel.app/portal/notificaciones |
+| Admin (Login) | https://urban-thread-ai-frontend-wine.vercel.app/admin/login |
+| Panel Admin | https://urban-thread-ai-frontend-wine.vercel.app/admin |
+| Checkout | https://urban-thread-ai-frontend-wine.vercel.app/checkout |
+
+### API Endpoints
+
+| Endpoint | Método | URL |
+|---|---|---|
+| Health Check | GET | /api/v1/health |
+| Validar Documento | POST | /api/v1/auth/validate-document |
+| Solicitar OTP | POST | /api/v1/auth/otp/request |
+| Verificar OTP | POST | /api/v1/auth/otp/verify |
+| Reenviar OTP | POST | /api/v1/auth/otp/resend |
+| Registrar Cliente | POST | /api/v1/auth/register-client |
+| Perfil Cliente | GET | /api/v1/clients/me |
+| Pedidos | GET/POST | /api/v1/orders |
+| Solicitudes | GET/POST | /api/v1/requests |
+| Actualizar Estado | PUT | /api/v1/requests/status |
+| Notificaciones | GET | /api/v1/notifications |
+| No leídas | GET | /api/v1/notifications/unread/count |
+| Documentos | GET | /api/v1/documents |
+| Testimonios | GET | /api/v1/testimonials |
+| Chatbot | POST | /api/v1/chatbot/message |
+
+---
+
 ## 🏗️ Arquitectura del Proyecto
 
 ```
@@ -17,12 +75,14 @@ UrbanThread AI/
 └── .gitignore         → Exclusiones de seguridad
 ```
 
-| Componente | Tecnología | Puerto |
+| Componente | Tecnología | Puerto Local |
 |---|---|---|
 | Frontend | Next.js 14 + TailwindCSS | 3000 |
 | Backend API | Express.js + TypeScript | 4000 |
 | Base de datos | PostgreSQL (Prisma ORM) | 5432 |
+| DB Producción | Neon PostgreSQL (serverless) | — |
 | Automatización | n8n Webhooks | Externo |
+| AI Chatbot | Google Gemini 2.0 Flash | — |
 
 ---
 
@@ -54,7 +114,6 @@ cp backend/.env.example backend/.env
 cd backend
 npx tsx scripts/start-db.ts
 ```
-> Usa PostgreSQL embebido (no requiere instalación externa). Los datos persisten en `backend/.pg-data/`.
 
 ### 5. Ejecutar migraciones y seed
 ```bash
@@ -68,32 +127,34 @@ npx tsx src/seeds/seed.ts
 cd backend
 npm run dev
 ```
-> API disponible en http://localhost:4000
 
 ### 7. Iniciar el Frontend
 ```bash
 cd frontend
 npm run dev
 ```
-> Aplicación disponible en http://localhost:3000
 
 ---
 
 ## 📋 Funcionalidades Principales
 
 ### 🛍️ Tienda Online
-- Colecciones: Mujer, Hombre, Niños, Beauty, Accesorios
+- Colecciones: Mujer, Hombre, Niños (6-14 años), Beauty, Accesorios
 - Catálogo con filtros por talla, color y categoría
 - Carrito de compras con checkout completo
 - Imágenes locales optimizadas para cada producto
+- Precios en pesos colombianos
 
 ### 👤 Portal del Cliente
 - Autenticación segura con OTP (código de 6 dígitos por email)
-- Validación de documento de identidad
-- Gestión de pedidos y seguimiento
-- Radicación de solicitudes (PQR)
-- Gestión de documentos
+- Validación de documento de identidad con webhook n8n
+- Gestión de pedidos y seguimiento con estados dinámicos
+- Radicación de solicitudes con flujo de pago integrado
+- Gestión de documentos (recibidos desde n8n/Google Drive)
+- Visor universal de documentos (PDF, DOCX, imágenes)
+- Sugerencia de vestimenta según clima de la ciudad
 - Notificaciones en tiempo real
+- Spinner de carga premium con diseño glassmorphism
 
 ### 🔐 Panel de Administración
 - Dashboard con métricas y analítica
@@ -103,16 +164,31 @@ npm run dev
 - Gestión de testimonios
 - Integraciones (WhatsApp, n8n)
 
-### 🤖 Inteligencia Artificial
-- Chatbot con Google Gemini AI
+### 🤖 Agente IA — Zyla
+- Chatbot con Google Gemini 2.0 Flash
 - Base de conocimiento con 300+ respuestas predefinidas
-- Reconocimiento de voz
-- Respuestas contextuales sobre productos, servicios y procesos
+- Reconocimiento de voz continuo (espera silencio antes de enviar)
+- Respuestas por voz con síntesis de habla en español colombiano
+- Precios siempre en pesos colombianos
+- Cierre cordial: "¿Puedo ayudarte en algo más?"
+- Disponible 24/7
 
 ### 🌿 Sostenibilidad
 - Página dedicada a prácticas sostenibles
 - Productos con badge "Eco"
 - Materiales reciclados y procesos de bajo impacto
+
+### 📄 Documentos (n8n + Google Drive)
+- Webhook n8n captura documentos automáticamente
+- Almacenamiento en base de datos Neon
+- Visor universal con Google Drive viewer
+- Descarga directa de cualquier tipo de archivo
+- Actualización automática (siempre última versión)
+
+### 💳 Flujo de Pago y Estados
+- Radicación → Registrada → Pagada → En preparación → Enviada → Entregada → Recibida → Cerrada
+- Temporizador automático de progresión de estados
+- Integración con carrito de compras desde radicación
 
 ---
 
@@ -128,55 +204,74 @@ npm run dev
     "Numerodocumento": "1234567890"
   }
   ```
-- **Tipos de documento soportados:**
-  - CC → Cédula de Ciudadanía
-  - CE → Cédula de Extranjería
-  - NIT → Número de Identificación Tributaria
-  - PP → Pasaporte
-  - TI → Tarjeta de Identidad
+- **Response capturado:** Datos del cliente + documentos de Google Drive
+- **Documentos:** Se guardan automáticamente en la BD asociados al cliente
 
-### WhatsApp (Meta Cloud API)
-- Integración opcional para notificaciones
-- Configurar tokens en `backend/.env`
+### Google Gemini AI
+- Modelo: gemini-2.0-flash
+- Respuestas contextuales sobre UrbanThread AI
+- System prompt con información completa de la empresa
 
-### Email (SMTP)
+### Email (SMTP - Ethereal)
 - Envío de códigos OTP
-- Notificaciones de pedidos
-- Compatible con cualquier proveedor SMTP
+- Preview URL para verificar correos en desarrollo
 
 ---
 
 ## 🗄️ Base de Datos
 
-PostgreSQL con 32 tablas gestionadas por Prisma ORM:
+### Producción (Neon PostgreSQL)
+- **Host:** ep-plain-cell-apfj0gcz-pooler.c-7.us-east-1.aws.neon.tech
+- **Database:** neondb
+- **Region:** US East 1
+- **Clientes:** 62
+- **Tablas:** 32
 
+### Modelos principales
 - **Autenticación:** Users, Roles, Permissions, OTP tokens
-- **Clientes:** Clients, Addresses, Documents
-- **Pedidos:** Orders, OrderItems, Payments
-- **Solicitudes:** Requests, RequestStatusHistory, AttachedFiles
+- **Clientes:** Clients, Addresses, Emails, Phones, Documents, Profiles
+- **Pedidos:** Orders, OrderItems, OrderStatus
+- **Solicitudes:** Requests, RequestStatus, AttachedFiles
 - **Contenido:** Testimonials, Products, Collections
 - **Sistema:** AuditLogs, Notifications, ChatbotSessions
-- **Integraciones:** Webhooks, WhatsAppMessages
-
-### Migraciones
-```bash
-cd backend
-npx prisma migrate dev      # Desarrollo (crear nueva migración)
-npx prisma migrate deploy   # Producción (aplicar migraciones)
-npx prisma studio           # UI visual de la base de datos
-```
+- **Integraciones:** Webhooks, WhatsappMessages
 
 ---
 
 ## 🛡️ Seguridad
 
-- JWT para autenticación de sesiones
+- JWT (jose) para autenticación de sesiones
 - Rate limiting (100 req/15min por IP)
 - Helmet.js para headers HTTP seguros
 - Sanitización de inputs (prevención XSS/injection)
 - CORS configurado
 - OTP con expiración (5 min) y bloqueo por intentos fallidos
 - Auditoría de operaciones de escritura
+
+---
+
+## 📁 Estructura del Frontend
+
+```
+frontend/src/
+├── app/                   → Pages (App Router Next.js 14)
+│   ├── (auth)/            → Login cliente y admin
+│   ├── (public)/          → Páginas públicas + checkout
+│   ├── admin/             → Panel de administración
+│   ├── portal/            → Portal del cliente
+│   └── api/v1/            → API Routes (Prisma + Neon)
+├── components/            → Componentes reutilizables
+│   ├── ui/                → Design system (Button, Card, Spinner...)
+│   ├── home/              → Secciones de la página principal
+│   ├── layout/            → Header, Footer, Sidebar, MobileMenu
+│   ├── cart/              → Carrito de compras
+│   ├── chatbot/           → Widget de chatbot Zyla
+│   └── radicacion/        → Formulario de radicación
+├── data/                  → Productos y knowledge base
+├── hooks/                 → Custom hooks (React Query)
+├── lib/                   → API client, Prisma, analytics
+└── stores/                → Estado global (Zustand)
+```
 
 ---
 
@@ -196,43 +291,6 @@ backend/src/
 └── utils/                 → JWT, crypto, email, errors
 ```
 
-### API Endpoints principales
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/api/v1/health` | Health check |
-| POST | `/api/v1/auth/validate-document` | Validar documento cliente |
-| POST | `/api/v1/auth/otp/request` | Solicitar código OTP |
-| POST | `/api/v1/auth/otp/verify` | Verificar código OTP |
-| GET | `/api/v1/clients` | Listar clientes |
-| GET | `/api/v1/orders` | Listar pedidos |
-| GET/POST | `/api/v1/requests` | Gestión de solicitudes |
-| GET | `/api/v1/testimonials` | Testimonios |
-| POST | `/api/v1/chatbot/message` | Chatbot AI |
-
----
-
-## 📁 Estructura del Frontend
-
-```
-frontend/src/
-├── app/                   → Pages (App Router Next.js 14)
-│   ├── (auth)/            → Login cliente y admin
-│   ├── (public)/          → Páginas públicas
-│   ├── admin/             → Panel de administración
-│   └── portal/            → Portal del cliente
-├── components/            → Componentes reutilizables
-│   ├── ui/                → Design system (Button, Card, Input...)
-│   ├── home/              → Secciones de la página principal
-│   ├── layout/            → Header, Footer, Sidebar
-│   ├── cart/              → Carrito de compras
-│   ├── chatbot/           → Widget de chatbot
-│   └── radicacion/        → Formulario de radicación
-├── data/                  → Productos y knowledge base
-├── hooks/                 → Custom hooks (React Query)
-├── lib/                   → API client, analytics, providers
-└── stores/                → Estado global (Zustand)
-```
-
 ---
 
 ## 🧪 Testing
@@ -241,13 +299,11 @@ frontend/src/
 # Backend
 cd backend
 npm test              # Tests unitarios e integración
-npm run test:watch    # Watch mode
 npm run test:coverage # Con cobertura
 
 # Frontend
 cd frontend
 npm test              # Tests de componentes
-npm run test:watch    # Watch mode
 ```
 
 ---
@@ -259,40 +315,52 @@ npm run dev:frontend     # Iniciar frontend en desarrollo
 npm run dev:backend      # Iniciar backend en desarrollo
 npm run build            # Build completo (shared + backend + frontend)
 npm run test             # Tests en todos los workspaces
-npm run lint             # Lint en todos los workspaces
 ```
-
----
-
-## 🌐 URLs de la Aplicación
-
-| Página | URL |
-|---|---|
-| Inicio | http://localhost:3000 |
-| Quiénes Somos | http://localhost:3000/quienes-somos |
-| Sostenibilidad | http://localhost:3000/sostenibilidad |
-| Servicios | http://localhost:3000/servicios |
-| Testimonios | http://localhost:3000/testimonios |
-| Contacto | http://localhost:3000/contacto |
-| Portal Cliente (Login) | http://localhost:3000/cliente/login |
-| Portal Cliente | http://localhost:3000/portal |
-| Admin (Login) | http://localhost:3000/admin/login |
-| Panel Admin | http://localhost:3000/admin |
 
 ---
 
 ## 🛠️ Variables de Entorno
 
-Ver `backend/.env.example` para la lista completa. Variables clave:
-
+### Backend (.env)
 | Variable | Descripción |
 |---|---|
-| `DATABASE_URL` | Conexión PostgreSQL |
+| `DATABASE_URL` | Conexión PostgreSQL (Neon en producción) |
 | `JWT_SECRET` | Secreto para tokens JWT |
 | `GEMINI_API_KEY` | API key de Google Gemini (chatbot) |
-| `SMTP_*` | Configuración de email |
+| `SMTP_*` | Configuración de email (Ethereal) |
 | `CORS_ORIGIN` | Origen permitido para CORS |
 | `N8N_WEBHOOK_BASE_URL` | URL base de n8n |
+
+### Frontend (Vercel)
+| Variable | Descripción |
+|---|---|
+| `DATABASE_URL` | Conexión Neon PostgreSQL |
+| `JWT_SECRET` | Secreto para verificar tokens |
+| `GEMINI_API_KEY` | Google Gemini para chatbot |
+| `NEXT_PUBLIC_API_URL` | URL del backend |
+| `SMTP_*` | Configuración email para OTP |
+
+---
+
+## 🔄 Sincronización Automática
+
+El proyecto tiene un hook configurado que al terminar cada tarea:
+1. Detecta cambios en git
+2. Hace commit y push a GitHub
+3. Despliega frontend y backend en Vercel automáticamente
+
+---
+
+## 👥 Clientes de Prueba
+
+| Documento | Nombre | Ciudad | Tipo |
+|---|---|---|---|
+| 1129564302 | Carlos Alberto Figueroa Martinez | Bogotá | Premium |
+| 1020061911 | Catalina García Ramírez | Bogotá | Premium |
+| 110102194 | Andrea Medina Rivera | Medellín | Frecuente |
+| 484857644 | Sergio Cruz Díaz | Bucaramanga | Estandar |
+| 1018439422 | Sandra Yaquelin Caranton Rodriguez | Bogotá | Estandar |
+| 1016963174 | Angie Tatiana Ortega Vargas | Bogotá | Frecuente |
 
 ---
 
