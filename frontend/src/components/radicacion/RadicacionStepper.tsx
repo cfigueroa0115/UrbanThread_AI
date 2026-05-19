@@ -310,9 +310,10 @@ export function RadicacionStepper() {
 
   const clientDocs = (() => {
     if (!state.client?.documents) return [];
-    return (state.client.documents as Array<{ id: string; fileName: string; documentTypeId?: string; mimeType?: string }>).map(d => ({
+    return (state.client.documents as Array<{ id: string; fileName: string; filePath?: string; documentTypeId?: string; mimeType?: string }>).map(d => ({
       id: d.id,
       fileName: d.fileName,
+      filePath: d.filePath ?? '',
       mimeType: d.mimeType ?? 'application/pdf',
     }));
   })();
