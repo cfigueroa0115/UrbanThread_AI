@@ -144,7 +144,20 @@ export default function PerfilPage() {
     (async () => {
       try {
         const res = await apiClient.get<ClientFull>(`/clients/me`);
-        if (res.data) setData(res.data);
+        if (res.data) {
+          setData(res.data);
+          // Si no hay documentos, reintentar en 5 segundos (el webhook puede estar procesando)
+          if (res.data.documents.length === 0) {
+            setTimeout(async () => {
+              try {
+                const retry = await apiClient.get<ClientFull>(`/clients/me`);
+                if (retry.data && retry.data.documents.length > 0) {
+                  setData(retry.data);
+                }
+              } catch { /* ignore */ }
+            }, 5000);
+          }
+        }
       } catch { /* ignore */ }
       finally { setLoading(false); }
     })();

@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
           Tipodocumento: tipoDocumentoLabel[documentType] || documentType,
           Numerodocumento: documentNumber,
         }),
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(25000),
       });
       if (n8nResponse.ok) {
         const responseData = await n8nResponse.json();
