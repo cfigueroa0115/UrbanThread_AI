@@ -134,37 +134,56 @@ interface ProductItem {
 const productCatalog: Record<string, Record<string, ProductItem[]>> = {
   mujer: {
     vestidos: [
-      { id: 'mv1', name: 'Vestido Elegance Midi', price: 199900, image: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['XS', 'S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Rojo', hex: '#C0392B' }, { name: 'Azul', hex: '#2C3E50' }] },
-      { id: 'mv2', name: 'Vestido Sostenible Floral', price: 179900, image: 'https://images.pexels.com/photos/1755428/pexels-photo-1755428.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L'], colors: [{ name: 'Floral', hex: '#E8A0BF' }, { name: 'Verde', hex: '#27AE60' }] },
-      { id: 'mv3', name: 'Vestido Cocktail Premium', price: 249900, image: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['XS', 'S', 'M', 'L'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
+      { id: 'mv1', name: 'Vestido Elegance Midi', price: 199900, image: '/images/vestidos-1.jpg', sizes: ['XS', 'S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Rojo', hex: '#C0392B' }, { name: 'Azul', hex: '#2C3E50' }] },
+      { id: 'mv2', name: 'Vestido Sostenible Floral', price: 179900, image: '/images/vestidos-2.jpg', sizes: ['S', 'M', 'L'], colors: [{ name: 'Floral', hex: '#E8A0BF' }, { name: 'Verde', hex: '#27AE60' }] },
+      { id: 'mv3', name: 'Vestido Cocktail Premium', price: 249900, image: '/images/vestidos-3.jpg', sizes: ['XS', 'S', 'M', 'L'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
     ],
     blusas: [
-      { id: 'mb1', name: 'Blusa Seda Natural', price: 129900, image: 'https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['XS', 'S', 'M', 'L', 'XL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Crema', hex: '#F5EDE4' }, { name: 'Rosa', hex: '#E8A0BF' }] },
-      { id: 'mb2', name: 'Top Elegante Orgánico', price: 79900, image: 'https://images.pexels.com/photos/1462637/pexels-photo-1462637.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['XS', 'S', 'M', 'L'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Blanco', hex: '#FFFFFF' }] },
+      { id: 'mb1', name: 'Blusa Seda Natural', price: 129900, image: '/images/blusas-1.jpg', sizes: ['XS', 'S', 'M', 'L', 'XL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Crema', hex: '#F5EDE4' }, { name: 'Rosa', hex: '#E8A0BF' }] },
+      { id: 'mb2', name: 'Top Elegante Orgánico', price: 79900, image: '/images/blusas-2.jpg', sizes: ['XS', 'S', 'M', 'L'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Blanco', hex: '#FFFFFF' }] },
     ],
     chaquetas: [
-      { id: 'mc1', name: 'Chaqueta Cuero Eco', price: 349900, image: 'https://images.pexels.com/photos/2887766/pexels-photo-2887766.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Marrón', hex: '#8B6F5E' }] },
+      { id: 'mc1', name: 'Chaqueta Cuero Eco', price: 349900, image: '/images/chaquetas-1.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Marrón', hex: '#8B6F5E' }] },
+    ],
+    faldas: [
+      { id: 'mf1', name: 'Falda Midi Elegante', price: 139900, image: '/images/faldas-1.jpg', sizes: ['XS', 'S', 'M', 'L'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Beige', hex: '#F5EDE4' }] },
+      { id: 'mf2', name: 'Falda Plisada Premium', price: 159900, image: '/images/faldas-2.jpg', sizes: ['S', 'M', 'L'], colors: [{ name: 'Rosa', hex: '#E8A0BF' }, { name: 'Azul', hex: '#85C1E9' }] },
+    ],
+    jeans: [
+      { id: 'mj1', name: 'Jeans Skinny Eco', price: 149900, image: '/images/jeans-1.jpg', sizes: ['26', '28', '30', '32', '34'], colors: [{ name: 'Azul Oscuro', hex: '#2C3E50' }, { name: 'Azul Claro', hex: '#85C1E9' }] },
+      { id: 'mj2', name: 'Jeans Mom Fit', price: 159900, image: '/images/jeans-2.jpg', sizes: ['26', '28', '30', '32'], colors: [{ name: 'Azul', hex: '#2C3E50' }, { name: 'Negro', hex: '#1A1A1A' }] },
     ],
     zapatos: [
-      { id: 'mz1', name: 'Tacones Elegance', price: 189900, image: 'https://images.pexels.com/photos/336372/pexels-photo-336372.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['35', '36', '37', '38', '39', '40'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Nude', hex: '#D4A76A' }] },
+      { id: 'mz1', name: 'Tacones Elegance', price: 189900, image: '/images/zapatos-1.jpg', sizes: ['35', '36', '37', '38', '39', '40'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Nude', hex: '#D4A76A' }] },
+      { id: 'mz2', name: 'Sneakers Mujer Urban', price: 169900, image: '/images/zapatos-2.jpg', sizes: ['35', '36', '37', '38', '39'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Rosa', hex: '#E8A0BF' }] },
     ],
   },
   hombre: {
     camisetas: [
-      { id: 'hc1', name: 'Camiseta Premium Algodón', price: 89900, image: 'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L', 'XL', 'XXL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Negro', hex: '#1A1A1A' }, { name: 'Gris', hex: '#95A5A6' }] },
-      { id: 'hc2', name: 'Camiseta Sport Eco', price: 69900, image: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Azul', hex: '#2C3E50' }, { name: 'Verde', hex: '#27AE60' }] },
+      { id: 'hc1', name: 'Camiseta Premium Algodón', price: 89900, image: '/images/hombre-camisas-3.jpg', sizes: ['S', 'M', 'L', 'XL', 'XXL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Negro', hex: '#1A1A1A' }, { name: 'Gris', hex: '#95A5A6' }] },
+      { id: 'hc2', name: 'Camiseta Sport Eco', price: 69900, image: '/images/hombre-camisas-2.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Azul', hex: '#2C3E50' }, { name: 'Verde', hex: '#27AE60' }] },
     ],
     camisas: [
-      { id: 'hs1', name: 'Camisa Lino Premium', price: 149900, image: 'https://images.pexels.com/photos/2887766/pexels-photo-2887766.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Celeste', hex: '#85C1E9' }, { name: 'Beige', hex: '#F5EDE4' }] },
+      { id: 'hs1', name: 'Camisa Lino Premium', price: 149900, image: '/images/hombre-camisas-1.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Celeste', hex: '#85C1E9' }, { name: 'Beige', hex: '#F5EDE4' }] },
+    ],
+    pantalones: [
+      { id: 'hp1', name: 'Pantalón Chino Slim', price: 139900, image: '/images/hombre-pantalones-1.jpg', sizes: ['28', '30', '32', '34', '36'], colors: [{ name: 'Beige', hex: '#F5EDE4' }, { name: 'Azul Navy', hex: '#2C3E50' }] },
+      { id: 'hp2', name: 'Pantalón Formal Eco', price: 169900, image: '/images/hombre-pantalones-2.jpg', sizes: ['30', '32', '34', '36'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Gris', hex: '#95A5A6' }] },
     ],
     chaquetas: [
-      { id: 'hj1', name: 'Blazer Smart Casual', price: 299900, image: 'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Azul Navy', hex: '#2C3E50' }] },
+      { id: 'hj1', name: 'Blazer Smart Casual', price: 299900, image: '/images/hombre-chaquetas-1.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Azul Navy', hex: '#2C3E50' }] },
+      { id: 'hj3', name: 'Chaqueta Bomber Urban', price: 249900, image: '/images/hombre-chaquetas-2.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Verde', hex: '#27AE60' }] },
     ],
     jeans: [
-      { id: 'hj2', name: 'Jeans Eco-Denim Slim', price: 159900, image: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['28', '30', '32', '34', '36', '38'], colors: [{ name: 'Azul Oscuro', hex: '#2C3E50' }, { name: 'Azul Claro', hex: '#85C1E9' }] },
+      { id: 'hj2', name: 'Jeans Eco-Denim Slim', price: 159900, image: '/images/hombre-pantalones-3.jpg', sizes: ['28', '30', '32', '34', '36', '38'], colors: [{ name: 'Azul Oscuro', hex: '#2C3E50' }, { name: 'Azul Claro', hex: '#85C1E9' }] },
+    ],
+    trajes: [
+      { id: 'ht1', name: 'Traje Formal Premium', price: 499900, image: '/images/hombre-trajes-1.jpg', sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Azul Navy', hex: '#2C3E50' }] },
+      { id: 'ht2', name: 'Traje Casual Lino', price: 399900, image: '/images/hombre-trajes-2.jpg', sizes: ['M', 'L', 'XL'], colors: [{ name: 'Beige', hex: '#F5EDE4' }, { name: 'Gris', hex: '#95A5A6' }] },
     ],
     zapatos: [
-      { id: 'hz1', name: 'Sneakers Urban Edition', price: 189900, image: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['38', '39', '40', '41', '42', '43', '44'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Negro', hex: '#1A1A1A' }, { name: 'Rojo', hex: '#C0392B' }] },
+      { id: 'hz1', name: 'Sneakers Urban Edition', price: 189900, image: '/images/hombre-zapatos-1.jpg', sizes: ['38', '39', '40', '41', '42', '43', '44'], colors: [{ name: 'Blanco', hex: '#FFFFFF' }, { name: 'Negro', hex: '#1A1A1A' }, { name: 'Rojo', hex: '#C0392B' }] },
+      { id: 'hz2', name: 'Zapatos Formales Cuero', price: 229900, image: '/images/hombre-zapatos-2.jpg', sizes: ['39', '40', '41', '42', '43'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Marrón', hex: '#8B6F5E' }] },
     ],
   },
   ninos: {
@@ -180,21 +199,24 @@ const productCatalog: Record<string, Record<string, ProductItem[]>> = {
   },
   beauty: {
     'fragancias-mujer': [
-      { id: 'bf1', name: 'Perfume Elegance 50ml', price: 189900, image: 'https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['30ml', '50ml', '100ml'], colors: [] },
+      { id: 'bf1', name: 'Perfume Elegance 50ml', price: 189900, image: '/images/lociones-1.jpg', sizes: ['30ml', '50ml', '100ml'], colors: [] },
+      { id: 'bf3', name: 'Fragancia Floral 30ml', price: 149900, image: '/images/lociones-2.jpg', sizes: ['30ml', '50ml'], colors: [] },
     ],
     'fragancias-hombre': [
-      { id: 'bf2', name: 'Colonia Urban Man 100ml', price: 159900, image: 'https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['50ml', '100ml'], colors: [] },
+      { id: 'bf2', name: 'Colonia Urban Man 100ml', price: 159900, image: '/images/hombre-lociones-1.jpg', sizes: ['50ml', '100ml'], colors: [] },
+      { id: 'bf4', name: 'Perfume Sport 50ml', price: 139900, image: '/images/hombre-lociones-2.jpg', sizes: ['50ml', '100ml'], colors: [] },
     ],
   },
   accesorios: {
     bolsos: [
-      { id: 'ab1', name: 'Bolso Crossbody Premium', price: 149900, image: 'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['Único'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Marrón', hex: '#8B6F5E' }, { name: 'Camel', hex: '#C4956A' }] },
+      { id: 'ab1', name: 'Bolso Crossbody Premium', price: 149900, image: '/images/accesorios-1.jpg', sizes: ['Único'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Marrón', hex: '#8B6F5E' }, { name: 'Camel', hex: '#C4956A' }] },
+      { id: 'ab2', name: 'Bolso Tote Eco', price: 179900, image: '/images/accesorios-2.jpg', sizes: ['Único'], colors: [{ name: 'Beige', hex: '#F5EDE4' }, { name: 'Negro', hex: '#1A1A1A' }] },
     ],
     gafas: [
-      { id: 'ag1', name: 'Gafas Aviator Classic', price: 89900, image: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['Único'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
+      { id: 'ag1', name: 'Gafas Aviator Classic', price: 89900, image: '/images/accesorios-3.jpg', sizes: ['Único'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
     ],
     joyeria: [
-      { id: 'aj1', name: 'Collar Minimalista Oro', price: 119900, image: 'https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=300&h=400&dpr=1', sizes: ['40cm', '45cm', '50cm'], colors: [{ name: 'Oro', hex: '#C4956A' }, { name: 'Plata', hex: '#BDC3C7' }] },
+      { id: 'aj1', name: 'Collar Minimalista Oro', price: 119900, image: '/images/hombre-accesorios-2.jpg', sizes: ['40cm', '45cm', '50cm'], colors: [{ name: 'Oro', hex: '#C4956A' }, { name: 'Plata', hex: '#BDC3C7' }] },
     ],
   },
 };

@@ -70,9 +70,9 @@ function getSuggestion(temp: number): WeatherSuggestion {
       gradient: 'from-[#2D2D2D] to-[#1A1A1A]',
       icon: <CloudSnow className="h-12 w-12 text-[#C4956A]" />,
       images: [
-        'https://images.pexels.com/photos/2887766/pexels-photo-2887766.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/1462637/pexels-photo-1462637.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/336372/pexels-photo-336372.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
+        '/images/chaquetas-1.jpg',
+        '/images/chaquetas-3.jpg',
+        '/images/zapatos-1.jpg',
       ],
     };
   }
@@ -83,9 +83,9 @@ function getSuggestion(temp: number): WeatherSuggestion {
       gradient: 'from-[#2D2D2D] to-[#1A1A1A]',
       icon: <CloudSnow className="h-12 w-12 text-[#C4956A]" />,
       images: [
-        'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
+        '/images/chaquetas-2.jpg',
+        '/images/hombre-chaquetas-1.jpg',
+        '/images/jeans-1.jpg',
       ],
     };
   }
@@ -96,9 +96,9 @@ function getSuggestion(temp: number): WeatherSuggestion {
       gradient: 'from-[#2D2D2D] to-[#1A1A1A]',
       icon: <Cloud className="h-12 w-12 text-[#C4956A]" />,
       images: [
-        'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
+        '/images/hombre-camisas-1.jpg',
+        '/images/hombre-pantalones-1.jpg',
+        '/images/hombre-zapatos-1.jpg',
       ],
     };
   }
@@ -109,9 +109,9 @@ function getSuggestion(temp: number): WeatherSuggestion {
       gradient: 'from-[#C4956A] to-[#8B6F5E]',
       icon: <Sun className="h-12 w-12 text-white" />,
       images: [
-        'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/2887766/pexels-photo-2887766.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-        'https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
+        '/images/hombre-camisas-2.jpg',
+        '/images/hombre-pantalones-2.jpg',
+        '/images/zapatos-2.jpg',
       ],
     };
   }
@@ -121,9 +121,9 @@ function getSuggestion(temp: number): WeatherSuggestion {
     gradient: 'from-[#8B6F5E] to-[#C4956A]',
     icon: <Thermometer className="h-12 w-12 text-white" />,
     images: [
-      'https://images.pexels.com/photos/2897531/pexels-photo-2897531.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-      'https://images.pexels.com/photos/1755428/pexels-photo-1755428.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
-      'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=120&h=120&dpr=1',
+      '/images/blusas-1.jpg',
+      '/images/vestidos-1.jpg',
+      '/images/accesorios-1.jpg',
     ],
   };
 }
