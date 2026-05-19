@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
+import { LoadingOverlay } from '@/components/ui/Spinner';
 import { useRequestOTP, useVerifyOTP } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/auth.store';
 import { useCartStore } from '@/stores/cart.store';
@@ -172,6 +173,18 @@ export default function ClienteLoginPage() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-[#0a0a0a]">
+      {/* Loading overlay cuando está validando */}
+      {validationStatus === 'validating' && (
+        <LoadingOverlay message="Espere un momento por favor mientras validamos sus datos..." />
+      )}
+      {/* Loading overlay cuando está verificando OTP */}
+      {verifyOTP.isPending && (
+        <LoadingOverlay message="Verificando su código de seguridad..." />
+      )}
+      {/* Loading overlay cuando solicita OTP */}
+      {requestOTP.isPending && (
+        <LoadingOverlay message="Enviando código de verificación a su correo..." />
+      )}
       {/* Fashion carousel background */}
       <div className="absolute inset-0 opacity-60">
         <div className="flex flex-col justify-center h-full gap-2">

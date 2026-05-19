@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Spinner } from '@/components/ui/Spinner';
+import { Spinner, LoadingOverlay } from '@/components/ui/Spinner';
 import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/lib/api-client';
 
@@ -192,7 +192,7 @@ export default function PerfilPage() {
     })();
   }, [data]);
 
-  if (loading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (loading) return <LoadingOverlay message="Cargando tu perfil, espere un momento por favor..." />;
   if (!data) return <div className="p-6 text-center text-ut-text-muted">No se pudo cargar el perfil</div>;
 
   const primaryEmail = data.emails.find(e => e.isPrimary);
