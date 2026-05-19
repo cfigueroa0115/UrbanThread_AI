@@ -1082,7 +1082,6 @@ export function RadicacionStepper() {
                           image: entry.product.image,
                           size: entry.size,
                           color: entry.color,
-                          quantity: 1,
                         });
                       });
                       // Guardar radicación para actualizar estado después del pago

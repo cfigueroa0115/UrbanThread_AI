@@ -231,6 +231,7 @@ export default function SolicitudesPage() {
                     </div>
                   </div>
                   {detail.status === 'registered' && (
+                  <button
                     onClick={() => {
                       // Parse products from description and add to cart
                       const desc = detail.description ?? '';
@@ -267,7 +268,9 @@ export default function SolicitudesPage() {
                         });
                       });
 
-                      // Open the cart panel (which has the full checkout flow)
+                      // Save radication for status update after payment
+                      sessionStorage.setItem('pendingRadication', detail.radicationNumber);
+                      // Open the cart panel
                       useCartStore.getState().openCart();
                     }}
                     className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-[#C4956A] to-[#D4A76A] text-white font-bold text-sm shadow-lg hover:shadow-xl hover:brightness-110 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
