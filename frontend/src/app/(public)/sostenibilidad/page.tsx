@@ -108,16 +108,24 @@ export default function SostenibilidadPage() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {impactMetrics.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} whileHover={{ y: -6 }}
-                className="relative text-center p-6 rounded-2xl bg-white border border-stone-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
-                <motion.div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg mb-4`}
-                  animate={{ boxShadow: ['0 0 0px transparent', `0 0 16px ${stat.glow}`, '0 0 0px transparent'] }}
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -10, scale: 1.05 }}
+                className="relative text-center p-6 rounded-2xl bg-white border border-stone-100 shadow-sm hover:shadow-2xl transition-all duration-500 group overflow-hidden cursor-pointer">
+                {/* Rotating glow border */}
+                <motion.div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: `conic-gradient(from 0deg, transparent 30%, ${stat.glow.replace('0.4', '0.8')} 45%, white 50%, ${stat.glow.replace('0.4', '0.8')} 55%, transparent 70%)`, WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', padding: '2px' }}
+                  animate={{ rotate: [0, 360] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
+                {/* Background glow on hover */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 50%, ${stat.glow.replace('0.4', '0.1')}, transparent 70%)` }} />
+                {/* Icon with pulse */}
+                <motion.div className={`relative inline-flex p-3.5 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg mb-4 group-hover:shadow-2xl transition-shadow duration-500`}
+                  animate={{ boxShadow: ['0 0 0px transparent', `0 0 20px ${stat.glow}`, '0 0 0px transparent'], scale: [1, 1.08, 1] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}>
-                  <stat.icon className="h-5 w-5 text-white" />
+                  <stat.icon className="h-6 w-6 text-white" />
                 </motion.div>
-                <p className="text-4xl font-extrabold text-stone-900"><AnimatedCounter value={stat.value} suffix={stat.suffix} /></p>
-                <p className="text-sm font-semibold text-stone-700 mt-2">{stat.label}</p>
-                <p className="text-xs text-stone-400 mt-1">{stat.sublabel}</p>
+                <p className="relative text-4xl font-extrabold text-stone-900 group-hover:text-emerald-600 transition-colors duration-300"><AnimatedCounter value={stat.value} suffix={stat.suffix} /></p>
+                <p className="relative text-sm font-semibold text-stone-700 mt-2">{stat.label}</p>
+                <p className="relative text-xs text-stone-400 mt-1">{stat.sublabel}</p>
               </motion.div>
             ))}
           </div>
@@ -137,19 +145,38 @@ export default function SostenibilidadPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {ejesEstrategicos.map((eje, i) => (
               <motion.div key={eje.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                whileHover={{ y: -8 }} onClick={() => setSelectedEje(i)}
-                className="group relative rounded-2xl bg-white border border-stone-100 p-6 hover:shadow-2xl hover:border-emerald-200 transition-all duration-300 cursor-pointer">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${eje.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <eje.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="mt-4 text-lg font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">{eje.title}</h3>
-                <p className="mt-2 text-sm text-stone-500 leading-relaxed">{eje.description}</p>
-                <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-extrabold text-emerald-600">{eje.metric}</p>
-                    <p className="text-xs text-stone-400">{eje.metricLabel}</p>
+                whileHover={{ y: -10, scale: 1.03 }} onClick={() => setSelectedEje(i)}
+                className="group relative rounded-2xl overflow-hidden cursor-pointer">
+                {/* Animated rotating border */}
+                <motion.div className="absolute inset-0 rounded-2xl opacity-40 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: `conic-gradient(from 0deg, transparent 20%, ${eje.gradient.includes('emerald') ? 'rgba(16,185,129,0.8)' : eje.gradient.includes('blue') ? 'rgba(59,130,246,0.8)' : eje.gradient.includes('teal') ? 'rgba(20,184,166,0.8)' : eje.gradient.includes('violet') ? 'rgba(139,92,246,0.8)' : eje.gradient.includes('rose') ? 'rgba(244,63,94,0.8)' : 'rgba(245,158,11,0.8)'} 40%, white 50%, ${eje.gradient.includes('emerald') ? 'rgba(16,185,129,0.8)' : eje.gradient.includes('blue') ? 'rgba(59,130,246,0.8)' : eje.gradient.includes('teal') ? 'rgba(20,184,166,0.8)' : eje.gradient.includes('violet') ? 'rgba(139,92,246,0.8)' : eje.gradient.includes('rose') ? 'rgba(244,63,94,0.8)' : 'rgba(245,158,11,0.8)'} 60%, transparent 80%)`, WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', padding: '2px' }}
+                  animate={{ rotate: [0, 360] }} transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: 'linear' }} />
+                {/* Glow pulse */}
+                <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
+                  animate={{ boxShadow: ['0 0 0px transparent', `0 8px 30px ${eje.gradient.includes('emerald') ? 'rgba(16,185,129,0.3)' : eje.gradient.includes('blue') ? 'rgba(59,130,246,0.3)' : eje.gradient.includes('teal') ? 'rgba(20,184,166,0.3)' : eje.gradient.includes('violet') ? 'rgba(139,92,246,0.3)' : eje.gradient.includes('rose') ? 'rgba(244,63,94,0.3)' : 'rgba(245,158,11,0.3)'}`, '0 0 0px transparent'] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }} />
+                {/* Card body */}
+                <div className="relative h-full rounded-2xl border border-stone-100 group-hover:border-transparent bg-white group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-stone-50 p-6 transition-all duration-500 group-hover:shadow-2xl">
+                  {/* Shimmer effect on hover */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden pointer-events-none">
+                    <motion.div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }} />
                   </div>
-                  <ArrowRight className="h-4 w-4 text-stone-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                  {/* Icon */}
+                  <motion.div className={`relative inline-flex p-3.5 rounded-xl bg-gradient-to-br ${eje.gradient} shadow-lg group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500`}
+                    animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}>
+                    <eje.icon className="h-6 w-6 text-white" />
+                  </motion.div>
+                  <h3 className="relative mt-4 text-lg font-bold text-stone-900 group-hover:text-emerald-700 transition-colors duration-300">{eje.title}</h3>
+                  <p className="relative mt-2 text-sm text-stone-500 leading-relaxed">{eje.description}</p>
+                  <div className="relative mt-4 pt-4 border-t border-stone-100 group-hover:border-emerald-100 flex items-center justify-between transition-colors duration-300">
+                    <div>
+                      <p className="text-2xl font-extrabold text-emerald-600 group-hover:scale-110 transition-transform duration-300 inline-block">{eje.metric}</p>
+                      <p className="text-xs text-stone-400">{eje.metricLabel}</p>
+                    </div>
+                    <motion.div animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}>
+                      <ArrowRight className="h-4 w-4 text-stone-300 group-hover:text-emerald-500 transition-colors duration-300" />
+                    </motion.div>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -174,13 +201,22 @@ export default function SostenibilidadPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {smartCityPillars.map((pillar, i) => (
               <motion.div key={pillar.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-[#C4956A]/30 hover:bg-white/[0.08] transition-all duration-300 group">
-                <div className={`inline-flex p-3 rounded-xl ${pillar.bg} mb-4`}>
-                  <pillar.icon className={`h-6 w-6 ${pillar.color}`} />
+                whileHover={{ y: -6, scale: 1.03 }}
+                className="relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-[#C4956A]/50 hover:bg-white/[0.1] transition-all duration-500 group overflow-hidden cursor-pointer">
+                {/* Shine sweep on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-2xl">
+                  <motion.div className="absolute inset-0" style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(196,149,106,0.15) 45%, rgba(255,255,255,0.1) 50%, rgba(196,149,106,0.15) 55%, transparent 60%)' }}
+                    animate={{ x: ['-100%', '200%'] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1 }} />
                 </div>
-                <h3 className="text-lg font-bold text-white group-hover:text-[#C4956A] transition-colors">{pillar.title}</h3>
-                <p className="mt-2 text-sm text-white/50 leading-relaxed">{pillar.description}</p>
+                {/* Glow */}
+                <motion.div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ boxShadow: `inset 0 0 30px ${pillar.color.includes('blue') ? 'rgba(59,130,246,0.1)' : pillar.color.includes('emerald') ? 'rgba(16,185,129,0.1)' : pillar.color.includes('violet') ? 'rgba(139,92,246,0.1)' : pillar.color.includes('green') ? 'rgba(34,197,94,0.1)' : pillar.color.includes('rose') ? 'rgba(244,63,94,0.1)' : 'rgba(196,149,106,0.1)'}` }} />
+                <motion.div className={`relative inline-flex p-3 rounded-xl ${pillar.bg} mb-4 group-hover:scale-110 transition-transform duration-300`}
+                  animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 }}>
+                  <pillar.icon className={`h-6 w-6 ${pillar.color}`} />
+                </motion.div>
+                <h3 className="relative text-lg font-bold text-white group-hover:text-[#C4956A] transition-colors duration-300">{pillar.title}</h3>
+                <p className="relative mt-2 text-sm text-white/50 group-hover:text-white/70 leading-relaxed transition-colors duration-300">{pillar.description}</p>
               </motion.div>
             ))}
           </div>
