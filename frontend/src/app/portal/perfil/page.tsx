@@ -541,30 +541,32 @@ export default function PerfilPage() {
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-xl border border-ut-surface-dark">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm table-fixed">
                     <thead className="bg-gradient-to-r from-ut-surface to-ut-surface-dark">
                       <tr>
-                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Archivo</th>
-                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Tipo</th>
-                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Tamano</th>
-                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Estado</th>
-                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Fecha</th>
-                        <th className="text-center px-4 py-3 text-xs font-bold text-ut-text-muted uppercase">Acciones</th>
+                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase w-[40%]">Archivo</th>
+                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase w-[15%]">Tipo</th>
+                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase w-[12%]">Estado</th>
+                        <th className="text-left px-4 py-3 text-xs font-bold text-ut-text-muted uppercase w-[15%]">Fecha</th>
+                        <th className="text-center px-4 py-3 text-xs font-bold text-ut-text-muted uppercase w-[18%]">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.documents.map(doc => (
+                      {data.documents.map(doc => {
+                        // Formatear tipo de archivo legible
+                        const fileExt = doc.fileName.split('.').pop()?.toUpperCase() || '';
+                        const typeLabel = fileExt === 'DOCX' ? 'Word' : fileExt === 'PDF' ? 'PDF' : fileExt === 'JPG' || fileExt === 'JPEG' ? 'Imagen' : fileExt === 'PNG' ? 'Imagen' : fileExt === 'XLSX' ? 'Excel' : fileExt || 'Archivo';
+                        return (
                         <tr key={doc.id} className="border-t border-ut-surface-dark hover:bg-ut-accent/5 transition-colors">
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <div className="p-1.5 rounded-lg bg-blue-50"><FileText className="h-4 w-4 text-blue-500" /></div>
-                              <span className="font-medium text-ut-text">{doc.fileName}</span>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="p-1.5 rounded-lg bg-blue-50 flex-shrink-0"><FileText className="h-4 w-4 text-blue-500" /></div>
+                              <span className="font-medium text-ut-text truncate" title={doc.fileName}>{doc.fileName}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-ut-text-muted">{doc.mimeType.split('/')[1]?.toUpperCase() ?? doc.mimeType}</td>
-                          <td className="px-4 py-3 text-ut-text-muted">{doc.fileSize > 1048576 ? `${(doc.fileSize / 1048576).toFixed(1)} MB` : `${(doc.fileSize / 1024).toFixed(0)} KB`}</td>
+                          <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 text-xs font-semibold">{typeLabel}</span></td>
                           <td className="px-4 py-3"><Badge variant={doc.status === 'active' ? 'success' : 'default'}>{doc.status === 'active' ? 'Activo' : doc.status}</Badge></td>
-                          <td className="px-4 py-3 text-ut-text-muted">{new Date(doc.createdAt).toLocaleDateString('es-CO')}</td>
+                          <td className="px-4 py-3 text-ut-text-muted text-xs">{new Date(doc.createdAt).toLocaleDateString('es-CO')}</td>
                           <td className="px-4 py-3 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <button onClick={() => setPreviewDoc(doc)} className="p-1.5 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" title="Ver documento"><Eye className="h-4 w-4" /></button>
@@ -580,7 +582,8 @@ export default function PerfilPage() {
                             </div>
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -623,7 +626,7 @@ export default function PerfilPage() {
             </div>
             <div className="p-4 overflow-y-auto max-h-[75vh] bg-stone-50">
               {(() => {
-                // Determinar la URL de preview usando Google Drive viewer
+                // Extraer fileId de la URL de Google Drive
                 const fileId = previewDoc.filePath.includes('/file/d/') 
                   ? previewDoc.filePath.split('/file/d/')[1]?.split('/')[0]
                   : previewDoc.filePath.includes('id=')
@@ -632,18 +635,7 @@ export default function PerfilPage() {
                 const drivePreviewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
                 const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
 
-                if (previewDoc.mimeType.startsWith('image/')) {
-                  return (
-                    <div className="flex flex-col items-center gap-4">
-                      <img src={driveDownloadUrl} alt={previewDoc.fileName} className="max-w-full max-h-[60vh] rounded-lg shadow-lg" />
-                      <a href={driveDownloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4956A] text-white text-sm font-semibold hover:bg-[#8B6F5E] transition-colors">
-                        <Download className="h-4 w-4" /> Descargar imagen
-                      </a>
-                    </div>
-                  );
-                }
-
-                // Para PDF, DOCX, y cualquier otro archivo: usar Google Drive viewer
+                // Usar Google Drive viewer para TODOS los tipos de archivo (universal)
                 return (
                   <div className="flex flex-col gap-4">
                     <div className="w-full h-[65vh] rounded-lg overflow-hidden border border-stone-200 shadow-inner">
