@@ -234,8 +234,8 @@ export const allCategories: CategoryData[] = [
         name: 'Zapatos Infantiles',
         slug: 'zapatos-infantiles',
         images: [
-          'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=500&h=600&dpr=1',
-          'https://images.pexels.com/photos/336372/pexels-photo-336372.jpeg?auto=compress&cs=tinysrgb&w=500&h=600&dpr=1',
+          '/images/ninos-zapatos-1.jpg',
+          '/images/ninos-zapatos-2.jpg',
         ],
         priceRange: '$49.900 - $119.900',
       },
@@ -304,8 +304,8 @@ export const allCategories: CategoryData[] = [
         name: 'Gafas de Sol',
         slug: 'gafas-sol',
         images: [
-          'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=500&h=600&dpr=1',
-          'https://images.pexels.com/photos/45055/pexels-photo-45055.jpeg?auto=compress&cs=tinysrgb&w=500&h=600&dpr=1',
+          '/images/accesorios-gafas-1.jpg',
+          '/images/accesorios-gafas-2.jpg',
         ],
         priceRange: '$59.900 - $179.900',
       },

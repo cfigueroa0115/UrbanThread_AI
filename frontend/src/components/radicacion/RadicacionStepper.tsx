@@ -213,7 +213,8 @@ const productCatalog: Record<string, Record<string, ProductItem[]>> = {
       { id: 'ab2', name: 'Bolso Tote Eco', price: 179900, image: '/images/accesorios-2.jpg', sizes: ['Único'], colors: [{ name: 'Beige', hex: '#F5EDE4' }, { name: 'Negro', hex: '#1A1A1A' }] },
     ],
     gafas: [
-      { id: 'ag1', name: 'Gafas Aviator Classic', price: 89900, image: '/images/accesorios-3.jpg', sizes: ['Único'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
+      { id: 'ag1', name: 'Gafas Aviator Classic', price: 89900, image: '/images/accesorios-gafas-1.jpg', sizes: ['Único'], colors: [{ name: 'Dorado', hex: '#C4956A' }, { name: 'Negro', hex: '#1A1A1A' }] },
+      { id: 'ag2', name: 'Gafas Clubmaster Premium', price: 99900, image: '/images/accesorios-gafas-2.jpg', sizes: ['Único'], colors: [{ name: 'Negro', hex: '#1A1A1A' }, { name: 'Tortuga', hex: '#8B6F5E' }] },
     ],
     joyeria: [
       { id: 'aj1', name: 'Collar Minimalista Oro', price: 119900, image: '/images/hombre-accesorios-2.jpg', sizes: ['40cm', '45cm', '50cm'], colors: [{ name: 'Oro', hex: '#C4956A' }, { name: 'Plata', hex: '#BDC3C7' }] },
