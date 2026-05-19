@@ -16,6 +16,7 @@ import {
   ArrowRight,
   Paperclip,
   ShoppingBag,
+  ShoppingCart,
   FileText,
   Shirt,
   X,
@@ -28,6 +29,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Textarea } from '@/components/ui/Textarea';
 import { Spinner } from '@/components/ui/Spinner';
+import { useCartStore } from '@/stores/cart.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { useCreateRequest } from '@/hooks/useRequests';
 import { apiClient } from '@/lib/api-client';
@@ -1065,6 +1067,42 @@ export function RadicacionStepper() {
 
                 {/* Action buttons — dynamic and attractive */}
                 <div className="flex flex-col gap-3 pt-3">
+                  {/* PAGAR - Botón principal */}
+                  <motion.button
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => {
+                      // Agregar productos al carrito y redirigir al pago
+                      const { addItem, openCart } = useCartStore.getState();
+                      state.selectedProducts.forEach((entry) => {
+                        addItem({
+                          id: entry.product.id,
+                          name: entry.product.name,
+                          price: entry.product.price,
+                          image: entry.product.image,
+                          size: entry.size,
+                          color: entry.color,
+                          quantity: 1,
+                        });
+                      });
+                      // Guardar radicación para actualizar estado después del pago
+                      if (state.radicationNumber) {
+                        sessionStorage.setItem('pendingRadication', state.radicationNumber);
+                      }
+                      router.push('/');
+                      setTimeout(() => openCart(), 500);
+                    }}
+                    className="relative w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-[#C4956A] to-[#D4A76A] text-white font-bold text-base overflow-hidden group shadow-lg shadow-[#C4956A]/30"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      animate={{ x: ['-100%', '200%'] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.5 }}
+                    />
+                    <ShoppingCart className="h-5 w-5 relative z-10" />
+                    <span className="relative z-10">Proceder al pago</span>
+                  </motion.button>
+
                   <motion.button
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
@@ -1083,18 +1121,8 @@ export function RadicacionStepper() {
                   <motion.button
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => router.push('/portal/perfil')}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#C4956A] text-white font-bold text-sm hover:bg-[#B07D52] transition-colors"
-                  >
-                    <UserCheck className="h-4 w-4" />
-                    Finalizar e ir al perfil
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
                     onClick={() => router.push('/portal/solicitudes')}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-[#C4956A] text-[#C4956A] font-bold text-sm hover:bg-[#C4956A]/5 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-[#C4956A] text-[#C4956A] font-bold text-sm hover:bg-[#C4956A]/10 transition-colors"
                   >
                     <ClipboardList className="h-4 w-4" />
                     Ver mis solicitudes (trazabilidad)

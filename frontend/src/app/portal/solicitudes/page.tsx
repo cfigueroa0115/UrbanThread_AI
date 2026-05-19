@@ -21,6 +21,11 @@ import {
 
 const statusVariant: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
   registered: 'info',
+  paid: 'success',
+  in_preparation: 'warning',
+  shipped: 'info',
+  delivered: 'success',
+  received: 'success',
   in_review: 'warning',
   in_progress: 'info',
   pending_info: 'warning',
@@ -31,6 +36,11 @@ const statusVariant: Record<string, 'default' | 'success' | 'warning' | 'danger'
 
 const statusLabel: Record<string, string> = {
   registered: 'Registrada',
+  paid: 'Pagada',
+  in_preparation: 'En preparación',
+  shipped: 'Enviada',
+  delivered: 'Entregada',
+  received: 'Recibida',
   in_review: 'En revisión',
   in_progress: 'En progreso',
   pending_info: 'Pendiente info',
@@ -208,7 +218,7 @@ export default function SolicitudesPage() {
             </Card>
 
             {/* Pay button — only for nuevo_pedido type with products */}
-            {detail.type === 'nuevo_pedido' && detail.status === 'registered' && (
+            {detail.type === 'nuevo_pedido' && (detail.status === 'registered' || detail.status === 'paid') && (
               <Card className="bg-gradient-to-r from-[#1A1A1A] to-[#2D2D2D] border-none">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
@@ -216,11 +226,11 @@ export default function SolicitudesPage() {
                       <CreditCard className="h-6 w-6 text-[#C4956A]" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-white">Proceder al pago</p>
-                      <p className="text-xs text-stone-400">Completa tu pedido y realiza el pago seguro</p>
+                      <p className="text-sm font-bold text-white">{detail.status === 'paid' ? 'Pago realizado' : 'Proceder al pago'}</p>
+                      <p className="text-xs text-stone-400">{detail.status === 'paid' ? 'Tu pago fue procesado exitosamente' : 'Completa tu pedido y realiza el pago seguro'}</p>
                     </div>
                   </div>
-                  <button
+                  {detail.status === 'registered' && (
                     onClick={() => {
                       // Parse products from description and add to cart
                       const desc = detail.description ?? '';
@@ -267,6 +277,7 @@ export default function SolicitudesPage() {
                       Ir a pagar
                     </span>
                   </button>
+                  )}
                 </div>
               </Card>
             )}

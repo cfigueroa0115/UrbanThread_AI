@@ -26,7 +26,26 @@ async function createRadicationOrder(items: CartItem[], paymentMethod: string, c
   try {
     const authState = useAuthStore.getState();
     const clientId = authState.client?.id;
+    const token = authState.clientToken || authState.token;
     
+    // Verificar si hay una radicación pendiente de la sección de radicación
+    const pendingRadication = typeof window !== 'undefined' ? sessionStorage.getItem('pendingRadication') : null;
+    
+    if (pendingRadication) {
+      // Actualizar estado de la radicación existente a "paid"
+      sessionStorage.removeItem('pendingRadication');
+      try {
+        await fetch('/api/v1/requests/status', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ radicationNumber: pendingRadication, status: 'paid' }),
+        });
+        // Activar temporizador de estados
+        triggerStatusProgression(pendingRadication, token);
+      } catch { /* silenciar */ }
+      return pendingRadication;
+    }
+
     const productLines = items.map((item, i) => {
       return [`Producto${items.length > 1 ? ` ${i + 1}` : ''}: ${item.name}`, `Precio: ${item.price}`, item.size ? `Talla: ${item.size}` : '', item.color ? `Color: ${item.color}` : '', item.image ? `Imagen: ${item.image}` : ''].filter(Boolean).join(' | ');
     });
@@ -40,7 +59,6 @@ async function createRadicationOrder(items: CartItem[], paymentMethod: string, c
     ].join(' | ').substring(0, 1990);
 
     if (clientId) {
-      const token = authState.clientToken || authState.token;
       const res = await fetch('/api/v1/requests', {
         method: 'POST',
         headers: {
@@ -56,13 +74,41 @@ async function createRadicationOrder(items: CartItem[], paymentMethod: string, c
       });
       if (res.ok) {
         const data = await res.json();
-        return data.data?.radicationNumber || generateLocalCode();
+        const radNumber = data.data?.radicationNumber || generateLocalCode();
+        // Marcar como pagada inmediatamente
+        try {
+          await fetch('/api/v1/requests/status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+            body: JSON.stringify({ radicationNumber: radNumber, status: 'paid' }),
+          });
+          triggerStatusProgression(radNumber, token);
+        } catch { /* silenciar */ }
+        return radNumber;
       }
     }
     return generateLocalCode();
   } catch {
     return generateLocalCode();
   }
+}
+
+// Temporizador de progresión de estados automática
+function triggerStatusProgression(radicationNumber: string, token: string | null) {
+  const states = ['in_preparation', 'shipped', 'delivered', 'received', 'closed'];
+  const delays = [15000, 30000, 45000, 60000, 75000]; // 15s, 30s, 45s, 60s, 75s
+
+  states.forEach((status, i) => {
+    setTimeout(async () => {
+      try {
+        await fetch('/api/v1/requests/status', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ radicationNumber, status }),
+        });
+      } catch { /* silenciar */ }
+    }, delays[i]);
+  });
 }
 
 function generateLocalCode(): string {
