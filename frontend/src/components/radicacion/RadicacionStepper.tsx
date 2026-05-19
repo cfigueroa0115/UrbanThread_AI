@@ -901,11 +901,12 @@ export function RadicacionStepper() {
                             whileHover={{ scale: 1.15 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={() => {
-                              // Simulate download
-                              const link = document.createElement('a');
-                              link.href = '#';
-                              link.download = doc.fileName;
-                              link.click();
+                              const fileId = doc.filePath.includes('/file/d/') 
+                                ? doc.filePath.split('/file/d/')[1]?.split('/')[0]
+                                : doc.filePath.includes('id=')
+                                  ? doc.filePath.split('id=')[1]?.split('&')[0]
+                                  : doc.filePath;
+                              window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
                             }}
                             className="p-1.5 rounded-lg text-stone-400 hover:text-[#C4956A] hover:bg-[#C4956A]/10 transition-colors"
                             title="Descargar"

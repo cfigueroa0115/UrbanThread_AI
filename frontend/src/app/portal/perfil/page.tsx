@@ -568,7 +568,15 @@ export default function PerfilPage() {
                           <td className="px-4 py-3 text-center">
                             <div className="flex items-center justify-center gap-2">
                               <button onClick={() => setPreviewDoc(doc)} className="p-1.5 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors" title="Ver documento"><Eye className="h-4 w-4" /></button>
-                              <button className="p-1.5 rounded-lg bg-green-50 text-green-500 hover:bg-green-100 transition-colors" title="Descargar"><Download className="h-4 w-4" /></button>
+                              <a 
+                                href={`https://drive.google.com/uc?export=download&id=${doc.filePath.includes('/file/d/') ? doc.filePath.split('/file/d/')[1]?.split('/')[0] : doc.filePath.includes('id=') ? doc.filePath.split('id=')[1]?.split('&')[0] : doc.filePath}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 rounded-lg bg-green-50 text-green-500 hover:bg-green-100 transition-colors" 
+                                title="Descargar"
+                              >
+                                <Download className="h-4 w-4" />
+                              </a>
                             </div>
                           </td>
                         </tr>
@@ -585,36 +593,76 @@ export default function PerfilPage() {
       {/* Document preview modal */}
       {previewDoc && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" style={{ zIndex: 60 }} onClick={() => setPreviewDoc(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-ut-surface-dark bg-gradient-to-r from-ut-primary to-ut-electric text-white">
               <div className="flex items-center gap-3">
                 <FileText className="h-5 w-5" />
                 <div>
                   <p className="font-bold text-sm">{previewDoc.fileName}</p>
-                  <p className="text-white/60 text-xs">{previewDoc.mimeType} - {(previewDoc.fileSize / 1024).toFixed(0)} KB</p>
+                  <p className="text-white/60 text-xs">{previewDoc.mimeType}{previewDoc.fileSize > 0 ? ` - ${(previewDoc.fileSize / 1024).toFixed(0)} KB` : ''}</p>
                 </div>
               </div>
-              <button onClick={() => setPreviewDoc(null)} className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors text-white">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href={previewDoc.filePath.includes('drive.google.com/file/d/') 
+                    ? previewDoc.filePath.replace('/preview', '').replace('/file/d/', '/uc?export=download&id=').replace(/\/.*$/, '')
+                    : previewDoc.filePath.includes('drive.google.com/uc') 
+                      ? previewDoc.filePath 
+                      : `https://drive.google.com/uc?export=download&id=${previewDoc.filePath}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition-colors text-white text-xs font-semibold"
+                  title="Descargar archivo"
+                >
+                  <Download className="h-3.5 w-3.5" /> Descargar
+                </a>
+                <button onClick={() => setPreviewDoc(null)} className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors text-white">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
             </div>
-            <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {previewDoc.mimeType.startsWith('image/') ? (
-                <img src={previewDoc.filePath} alt={previewDoc.fileName} className="max-w-full rounded-lg shadow-lg mx-auto" />
-              ) : previewDoc.mimeType === 'application/pdf' ? (
-                <div className="w-full h-[60vh] rounded-lg overflow-hidden border border-ut-surface-dark">
-                  <iframe src={previewDoc.filePath} className="w-full h-full" title={previewDoc.fileName} />
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <FileText className="h-16 w-16 text-ut-text-muted/30 mx-auto mb-4" />
-                  <p className="text-sm text-ut-text-muted">Vista previa no disponible para este tipo de archivo</p>
-                  <p className="text-xs text-ut-text-muted mt-1">{previewDoc.mimeType}</p>
-                  <button className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-ut-accent text-white text-sm font-semibold hover:bg-ut-accent-hover transition-colors">
-                    <Download className="h-4 w-4" /> Descargar archivo
-                  </button>
-                </div>
-              )}
+            <div className="p-4 overflow-y-auto max-h-[75vh] bg-stone-50">
+              {(() => {
+                // Determinar la URL de preview usando Google Drive viewer
+                const fileId = previewDoc.filePath.includes('/file/d/') 
+                  ? previewDoc.filePath.split('/file/d/')[1]?.split('/')[0]
+                  : previewDoc.filePath.includes('id=')
+                    ? previewDoc.filePath.split('id=')[1]?.split('&')[0]
+                    : previewDoc.filePath;
+                const drivePreviewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+                if (previewDoc.mimeType.startsWith('image/')) {
+                  return (
+                    <div className="flex flex-col items-center gap-4">
+                      <img src={driveDownloadUrl} alt={previewDoc.fileName} className="max-w-full max-h-[60vh] rounded-lg shadow-lg" />
+                      <a href={driveDownloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4956A] text-white text-sm font-semibold hover:bg-[#8B6F5E] transition-colors">
+                        <Download className="h-4 w-4" /> Descargar imagen
+                      </a>
+                    </div>
+                  );
+                }
+
+                // Para PDF, DOCX, y cualquier otro archivo: usar Google Drive viewer
+                return (
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full h-[65vh] rounded-lg overflow-hidden border border-stone-200 shadow-inner">
+                      <iframe 
+                        src={drivePreviewUrl} 
+                        className="w-full h-full" 
+                        title={previewDoc.fileName}
+                        allow="autoplay"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                      />
+                    </div>
+                    <div className="flex justify-center">
+                      <a href={driveDownloadUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#C4956A] text-white text-sm font-semibold hover:bg-[#8B6F5E] transition-colors">
+                        <Download className="h-4 w-4" /> Descargar archivo
+                      </a>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
