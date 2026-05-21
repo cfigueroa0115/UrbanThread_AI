@@ -142,37 +142,51 @@ export function CartPanel() {
     router.push('/cliente/login');
   };
 
-  // Submit email → lookup client and send OTP
+  // Submit email → validate client directly (no OTP for checkout)
   const handleEmailSubmit = useCallback(() => {
     if (!authEmail.trim()) {
       setAuthError('Ingrese su correo electrónico');
       return;
     }
     setAuthError('');
-    socialLookup.mutate({ email: authEmail.trim() }, {
-      onSuccess: (data) => {
-        if (!data.found) {
-          setAuthError('No se encontró una cuenta con este correo. Regístrese primero o use la opción "Cliente".');
+    
+    // Call the checkout-verify endpoint that authenticates by email directly
+    fetch('/api/v1/auth/checkout-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: authEmail.trim() }),
+    })
+      .then(r => r.json())
+      .then(res => {
+        if (res.status === 'error') {
+          setAuthError(res.errors?.[0]?.message || 'Error al verificar');
           return;
         }
-        if (!data.otpSent) {
-          setAuthError('Cliente encontrado pero no tiene correo registrado para verificación.');
+        if (!res.data?.found) {
+          setAuthError(res.data?.message || 'No se encontró una cuenta con este correo. Regístrese primero o use la opción "Cliente".');
           return;
         }
-        // OTP sent successfully
-        setClientInfo(data.client ?? null);
-        setMaskedEmail(data.maskedEmail ?? '');
-        setDevCode(data.devCode ?? '');
-        setCountdown(data.expiresIn ?? OTP_EXPIRATION_SECONDS);
-        setOtpCode('');
-        setOtpFieldError('');
-        setAuthStep('otp-verify');
-      },
-      onError: (err) => {
-        setAuthError(err instanceof Error ? err.message : 'Error al buscar la cuenta');
-      },
-    });
-  }, [authEmail, socialLookup]);
+        // Client found — authenticate directly without OTP
+        const { client: foundClient, token, expiresIn } = res.data;
+        setClientInfo(foundClient);
+        
+        // Update auth store directly
+        const authStore = useAuthStore.getState();
+        authStore.loginClient(token, {
+          id: foundClient.id,
+          firstName: foundClient.firstName,
+          lastName: foundClient.lastName,
+          documentType: foundClient.documentType,
+          documentNumber: foundClient.documentNumber,
+          email: authEmail.trim(),
+        }, expiresIn * 1000);
+        
+        // Modal will close automatically via the useEffect that watches isReallyAuthenticated
+      })
+      .catch(() => {
+        setAuthError('Error de conexión. Intente nuevamente.');
+      });
+  }, [authEmail]);
 
   // Verify OTP
   const handleVerifyOTP = useCallback(() => {
