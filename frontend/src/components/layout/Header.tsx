@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, Menu, LogOut, User, Settings, Home, Sparkles, Leaf, Wrench, Star, MessageCircle, type LucideIcon } from 'lucide-react';
+import { Bell, Menu, LogOut, User, Settings, Home, Sparkles, Leaf, Wrench, Star, MessageCircle, BarChart3, type LucideIcon } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, type DropdownItem } from '@/components/ui/Dropdown';
 import { MobileMenu } from './MobileMenu';
@@ -22,6 +22,7 @@ const publicLinks: Array<{ label: string; href: string; icon?: LucideIcon }> = [
   { label: 'UrbanThread', href: '/quienes-somos', icon: Sparkles },
   { label: 'Sostenibilidad', href: '/sostenibilidad', icon: Leaf },
   { label: 'Servicios', href: '/servicios', icon: Wrench },
+  { label: 'Insights', href: '/insights', icon: BarChart3 },
   { label: 'Testimonios', href: '/testimonios', icon: Star },
   { label: 'Contacto', href: '/contacto', icon: MessageCircle },
 ];
@@ -45,6 +46,7 @@ const fullMenuLinks = [
   { label: 'UrbanThread', href: '/quienes-somos' },
   { label: 'Sostenibilidad', href: '/sostenibilidad' },
   { label: 'Servicios', href: '/servicios' },
+  { label: 'Insights', href: '/insights' },
   { label: 'Testimonios', href: '/testimonios' },
   { label: 'Contacto', href: '/contacto' },
   { label: 'Portal Cliente', href: '/cliente/login' },

@@ -5,3 +5,5 @@ export { ExecutiveSustainabilityBlock } from './ExecutiveSustainabilityBlock';
 export { ExecutiveSmartCityBlock } from './ExecutiveSmartCityBlock';
 export { ExecutiveModeBadge } from './ExecutiveModeBadge';
 export { ExecutiveTrendChart } from './ExecutiveTrendChart';
+export { ExecutiveDonutChart } from './ExecutiveDonutChart';
+export { ExecutiveBarChart } from './ExecutiveBarChart';

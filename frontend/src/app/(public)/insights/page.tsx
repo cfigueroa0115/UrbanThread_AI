@@ -14,6 +14,8 @@ import {
   ExecutiveSmartCityBlock,
   ExecutiveModeBadge,
   ExecutiveTrendChart,
+  ExecutiveDonutChart,
+  ExecutiveBarChart,
 } from '@/components/insights';
 
 interface InsightsData {
@@ -128,6 +130,27 @@ export default function InsightsPage() {
             <p className="mt-2 text-sm text-stone-500">Smart Commerce powered by AI, automation and traceability</p>
           </motion.div>
           <ExecutiveHighlightCards highlights={data.highlights} />
+        </div>
+      </section>
+
+      {/* ═══ CHANNEL DISTRIBUTION + REQUEST TYPES ═══ */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Channel Distribution */}
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="p-6 rounded-2xl bg-white border border-stone-100 shadow-sm">
+              <h3 className="text-lg font-bold text-stone-900 mb-1">Omnichannel Distribution</h3>
+              <p className="text-xs text-stone-400 mb-6">Customer interaction channels</p>
+              <ExecutiveDonutChart data={data.charts.channelDistribution} title="Channels" />
+            </motion.div>
+
+            {/* Request Types */}
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="p-6 rounded-2xl bg-white border border-stone-100 shadow-sm">
+              <h3 className="text-lg font-bold text-stone-900 mb-1">Request Categories</h3>
+              <p className="text-xs text-stone-400 mb-6">Digital radication by type</p>
+              <ExecutiveBarChart data={data.charts.requestTypes} />
+            </motion.div>
+          </div>
         </div>
       </section>
 

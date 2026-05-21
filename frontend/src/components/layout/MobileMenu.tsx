@@ -226,6 +226,7 @@ export function MobileMenu({ isOpen, onClose, links, variant }: MobileMenuProps)
                       <div className="my-4 border-t border-stone-100" />
                       {[
                         { label: 'SOSTENIBILIDAD', href: '/sostenibilidad' },
+                        { label: 'INSIGHTS', href: '/insights' },
                         { label: 'QUIÉNES SOMOS', href: '/quienes-somos' },
                         { label: 'CONTACTO', href: '/contacto' },
                       ].map((link) => (
