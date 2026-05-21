@@ -175,14 +175,25 @@ export async function validateDocument(req: Request, res: Response, next: NextFu
     // 1. Call n8n webhook for external validation
     let n8nResult: Record<string, unknown> | null = null;
     try {
-      const n8nResponse = await fetch('https://carlosfigueroama.app.n8n.cloud/webhook/validacion_de_documento', {
+      const tipoDocumentoLabel: Record<string, string> = {
+        CC: 'Cédula de Ciudadanía',
+        CE: 'Cédula de Extranjería',
+        NIT: 'Número de Identificación Tributaria',
+        PP: 'Pasaporte',
+        TI: 'Tarjeta de Identidad',
+      };
+      const n8nResponse = await fetch('https://segurobolivar-trial.app.n8n.cloud/webhook/numero_de_identifica', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ documentType, documentNumber }),
-        signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({
+          Tipodocumento: tipoDocumentoLabel[documentType] || documentType,
+          Numerodocumento: documentNumber,
+        }),
+        signal: AbortSignal.timeout(25000),
       });
       if (n8nResponse.ok) {
-        n8nResult = await n8nResponse.json() as Record<string, unknown>;
+        const responseData = await n8nResponse.json();
+        n8nResult = Array.isArray(responseData) ? responseData[0] as Record<string, unknown> : responseData as Record<string, unknown>;
       }
     } catch (err) {
       console.log('[n8n] Webhook call failed (continuing with local DB):', (err as Error).message);

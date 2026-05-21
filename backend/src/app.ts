@@ -63,8 +63,22 @@ app.use(auditMiddleware);
 
 // ── Health check ─────────────────────────────────────────────────────────────
 
-app.get('/api/v1/health', (_req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/v1/health', async (_req: Request, res: Response) => {
+  let dbStatus = 'unknown';
+  let clientCount = 0;
+  try {
+    const { prisma } = await import('./lib/prisma.js');
+    clientCount = await prisma.client.count();
+    dbStatus = 'connected';
+  } catch {
+    dbStatus = 'disconnected';
+  }
+  res.json({
+    status: 'ok',
+    db: dbStatus,
+    clients: clientCount,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // ── API routes ───────────────────────────────────────────────────────────────

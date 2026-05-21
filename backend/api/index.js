@@ -1,7 +1,7 @@
 // Vercel Serverless Function - Backend Entry Point
-// Uses dynamic import to load the ESM Express app
+// Imports from compiled dist/ directory to resolve @shared path aliases
 
 export default async function handler(req, res) {
-  const { default: app } = await import('../src/app.js');
+  const { default: app } = await import('../dist/backend/src/app.js');
   return app(req, res);
 }
