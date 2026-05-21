@@ -6,6 +6,7 @@ import {
   FashionCollage,
   ContactSection,
   FloatingButtons,
+  ExecutiveInsightsMini,
 } from '@/components/home';
 
 export default function HomePage() {
@@ -16,6 +17,7 @@ export default function HomePage() {
         <FashionCollections />
         <FeaturedProducts />
         <FashionCTA />
+        <ExecutiveInsightsMini />
         <FashionCollage />
         <ContactSection />
       </main>

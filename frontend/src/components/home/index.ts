@@ -17,3 +17,5 @@ export { ContactSection } from './ContactSection';
 export { FloatingButtons } from './FloatingButtons';
 export { FashionCollections } from './FashionCollections';
 export { FeaturedProducts } from './FeaturedProducts';
+
+export { ExecutiveInsightsMini } from './ExecutiveInsightsMini';
