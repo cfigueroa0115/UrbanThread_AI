@@ -23,28 +23,66 @@ function CommandKPI({ title, value, suffix, trend, desc, source, icon: Icon, gra
   title: string; value: number; suffix?: string; trend?: number; desc: string; source: string;
   icon: React.ElementType; gradient: string; delay: number;
 }) {
+  // Extract glow color from gradient
+  const glowMap: Record<string, string> = {
+    'from-blue-500 to-indigo-600': 'rgba(99,102,241,0.4)',
+    'from-violet-500 to-purple-600': 'rgba(139,92,246,0.4)',
+    'from-cyan-500 to-teal-600': 'rgba(20,184,166,0.4)',
+    'from-rose-500 to-pink-600': 'rgba(244,63,94,0.4)',
+    'from-[#C4956A] to-[#8B6F5E]': 'rgba(196,149,106,0.4)',
+    'from-amber-500 to-orange-600': 'rgba(245,158,11,0.4)',
+    'from-emerald-500 to-green-600': 'rgba(16,185,129,0.4)',
+    'from-indigo-500 to-blue-600': 'rgba(99,102,241,0.4)',
+    'from-green-500 to-emerald-600': 'rgba(34,197,94,0.4)',
+  };
+  const glow = glowMap[gradient] || 'rgba(196,149,106,0.3)';
+
   return (
-    <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.35 }} whileHover={{ y: -2 }}
-      className="relative p-5 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)] transition-all duration-300 group overflow-hidden">
-      {/* Top glow line */}
-      <div className={`absolute top-0 left-4 right-4 h-[2px] rounded-full bg-gradient-to-r ${gradient} opacity-60 group-hover:opacity-100 transition-opacity`} />
-      <div className="flex items-start justify-between mb-3">
-        <div className={`p-2 rounded-xl bg-gradient-to-br ${gradient} shadow-sm`}>
+    <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: [0, -4, 0] }}
+      transition={{ opacity: { delay, duration: 0.35 }, y: { duration: 4 + delay * 2, repeat: Infinity, ease: 'easeInOut', delay: delay * 3 } }}
+      whileHover={{ y: -6, scale: 1.03 }}
+      className="relative p-5 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 group overflow-hidden">
+      {/* Animated top glow line */}
+      <motion.div className={`absolute top-0 left-4 right-4 h-[2.5px] rounded-full bg-gradient-to-r ${gradient}`}
+        animate={{ opacity: [0.5, 1, 0.5], scaleX: [0.8, 1, 0.8] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: delay * 2 }} />
+      {/* Permanent rotating border glow */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ background: `conic-gradient(from 0deg, transparent 60%, ${glow} 75%, transparent 90%)`, WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', padding: '1.5px' }}
+        animate={{ rotate: [0, 360], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ rotate: { duration: 6 + delay, repeat: Infinity, ease: 'linear' }, opacity: { duration: 3, repeat: Infinity, ease: 'easeInOut' } }} />
+      {/* Background glow pulse */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ background: `radial-gradient(ellipse at 30% 20%, ${glow.replace('0.4', '0.06')}, transparent 60%)` }}
+        animate={{ opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay }} />
+      {/* Shimmer sweep */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden">
+        <motion.div className="absolute inset-0"
+          style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%)' }}
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 + delay * 2 }} />
+      </motion.div>
+      <div className="relative flex items-start justify-between mb-3">
+        <motion.div className={`p-2 rounded-xl bg-gradient-to-br ${gradient} shadow-md`}
+          animate={{ scale: [1, 1.1, 1], boxShadow: [`0 2px 8px ${glow.replace('0.4', '0.2')}`, `0 4px 16px ${glow}`, `0 2px 8px ${glow.replace('0.4', '0.2')}`] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}>
           <Icon className="h-4 w-4 text-white" />
-        </div>
+        </motion.div>
         {trend !== undefined && (
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? 'text-emerald-700 bg-emerald-50/80' : 'text-red-600 bg-red-50/80'}`}>
+          <motion.span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? 'text-emerald-700 bg-emerald-50/80' : 'text-red-600 bg-red-50/80'}`}
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: delay + 0.5 }}>
             {trend >= 0 ? '↑' : '↓'}{Math.abs(trend)}%
-          </span>
+          </motion.span>
         )}
       </div>
-      <p className="text-[26px] font-extrabold text-stone-900 leading-none tracking-tight">
+      <p className="relative text-[26px] font-extrabold text-stone-900 leading-none tracking-tight">
         <AnimatedCounter value={value} /><span className="text-sm text-stone-400 ml-0.5 font-semibold">{suffix}</span>
       </p>
-      <p className="text-[11px] font-bold text-stone-700 mt-2">{title}</p>
-      <p className="text-[9px] text-stone-400 mt-0.5 leading-snug">{desc}</p>
-      <p className="text-[8px] text-stone-300 mt-2 uppercase tracking-widest font-medium">{source}</p>
+      <p className="relative text-[11px] font-bold text-stone-700 mt-2">{title}</p>
+      <p className="relative text-[9px] text-stone-400 mt-0.5 leading-snug">{desc}</p>
+      <p className="relative text-[8px] text-stone-300 mt-2 uppercase tracking-widest font-medium">{source}</p>
     </motion.div>
   );
 }
@@ -62,20 +100,47 @@ function SmartCityCard({ icon: Icon, label, value, suffix, desc, color, delay }:
     'text-teal-500': 'bg-teal-500/[0.06] border-teal-100/60',
     'text-[#C4956A]': 'bg-[#C4956A]/[0.06] border-[#C4956A]/20',
   };
+  const glowMap: Record<string, string> = {
+    'text-blue-500': 'rgba(59,130,246,0.4)',
+    'text-emerald-500': 'rgba(16,185,129,0.4)',
+    'text-violet-500': 'rgba(139,92,246,0.4)',
+    'text-amber-500': 'rgba(245,158,11,0.4)',
+    'text-teal-500': 'rgba(20,184,166,0.4)',
+    'text-[#C4956A]': 'rgba(196,149,106,0.4)',
+  };
+  const glow = glowMap[color] || 'rgba(196,149,106,0.3)';
+
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay, duration: 0.35 }} whileHover={{ y: -3, scale: 1.02 }}
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}
+      transition={{ opacity: { delay, duration: 0.35 }, scale: { delay, duration: 0.35 }, y: { duration: 4.5 + delay * 3, repeat: Infinity, ease: 'easeInOut', delay: delay * 4 } }}
+      whileHover={{ y: -6, scale: 1.04 }}
       className={`relative p-5 rounded-2xl border ${bgMap[color] || 'bg-stone-50 border-stone-100'} text-center group cursor-default overflow-hidden`}>
-      {/* Shimmer */}
-      <motion.div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-        style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%)' }}
-        animate={{ x: ['-100%', '200%'] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }} />
-      <motion.div animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay }}>
-        <Icon className={`h-7 w-7 ${color} mx-auto mb-2.5`} />
+      {/* Permanent rotating border */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ background: `conic-gradient(from 0deg, transparent 50%, ${glow} 70%, transparent 90%)`, WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', padding: '1.5px' }}
+        animate={{ rotate: [0, 360], opacity: [0.2, 0.5, 0.2] }}
+        transition={{ rotate: { duration: 5 + delay * 2, repeat: Infinity, ease: 'linear' }, opacity: { duration: 3, repeat: Infinity, ease: 'easeInOut' } }} />
+      {/* Permanent shimmer */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden">
+        <motion.div className="absolute inset-0"
+          style={{ background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%)' }}
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 + delay * 3 }} />
       </motion.div>
-      <p className="text-2xl font-extrabold text-stone-900"><AnimatedCounter value={value} />{suffix}</p>
-      <p className="text-[11px] font-bold text-stone-700 mt-1.5">{label}</p>
-      <p className="text-[9px] text-stone-400 mt-0.5">{desc}</p>
+      {/* Background glow */}
+      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ background: `radial-gradient(circle at 50% 30%, ${glow.replace('0.4', '0.08')}, transparent 60%)` }}
+        animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.95, 1.02, 0.95] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay }} />
+      {/* Icon with breathing + glow */}
+      <motion.div
+        animate={{ scale: [1, 1.12, 1], filter: [`drop-shadow(0 0 0px ${glow})`, `drop-shadow(0 0 8px ${glow})`, `drop-shadow(0 0 0px ${glow})`] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}>
+        <Icon className={`relative h-7 w-7 ${color} mx-auto mb-2.5`} />
+      </motion.div>
+      <p className="relative text-2xl font-extrabold text-stone-900"><AnimatedCounter value={value} />{suffix}</p>
+      <p className="relative text-[11px] font-bold text-stone-700 mt-1.5">{label}</p>
+      <p className="relative text-[9px] text-stone-400 mt-0.5">{desc}</p>
     </motion.div>
   );
 }
