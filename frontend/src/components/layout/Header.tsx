@@ -34,6 +34,9 @@ const portalLinks: Array<{ label: string; href: string; icon?: LucideIcon }> = [
   { label: 'Mi Perfil', href: '/portal/perfil' },
   { label: 'Pedidos', href: '/portal/pedidos' },
   { label: 'Solicitudes', href: '/portal/solicitudes' },
+  { label: 'Radicación', href: '/portal/radicacion' },
+  { label: 'Documentos', href: '/portal/documentos' },
+  { label: 'Notificaciones', href: '/portal/notificaciones' },
 ];
 
 /* Full navigation for the hamburger menu */

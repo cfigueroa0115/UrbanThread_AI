@@ -251,3 +251,10 @@
 .animate-scroll-row {
   animation: scroll-row 30s linear infinite;
 }
+
+/* ── Safe area for mobile bottom navigation (iPhone notch) ──────────────── */
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}

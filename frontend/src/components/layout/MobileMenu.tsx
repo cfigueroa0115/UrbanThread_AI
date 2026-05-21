@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, ShieldCheck } from 'lucide-react';
+import { X, User, ShieldCheck, ShoppingBag, FileText, FolderOpen, Bell, ClipboardList } from 'lucide-react';
 
 export interface MobileMenuProps {
   isOpen: boolean;
@@ -118,6 +118,7 @@ const adminPortalLinks = {
     { label: 'Mi Perfil', href: '/portal/perfil' },
     { label: 'Pedidos', href: '/portal/pedidos' },
     { label: 'Solicitudes', href: '/portal/solicitudes' },
+    { label: 'Radicación', href: '/portal/radicacion' },
     { label: 'Documentos', href: '/portal/documentos' },
     { label: 'Notificaciones', href: '/portal/notificaciones' },
   ],
@@ -340,12 +341,31 @@ export function MobileMenu({ isOpen, onClose, links, variant }: MobileMenuProps)
                   <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">
                     {variant === 'admin' ? 'Administración' : 'Portal Cliente'}
                   </p>
-                  {(variant === 'admin' ? adminPortalLinks.admin : adminPortalLinks.portal).map((link) => (
-                    <Link key={link.href} href={link.href} onClick={onClose}
-                      className="block py-2.5 text-sm font-medium text-stone-700 hover:text-[#C4956A] transition-colors">
-                      {link.label}
-                    </Link>
-                  ))}
+                  {variant === 'admin' ? (
+                    adminPortalLinks.admin.map((link) => (
+                      <Link key={link.href} href={link.href} onClick={onClose}
+                        className="block py-2.5 text-sm font-medium text-stone-700 hover:text-[#C4956A] transition-colors">
+                        {link.label}
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="space-y-1">
+                      {[
+                        { label: 'Mi Perfil', href: '/portal/perfil', icon: <User className="h-5 w-5" /> },
+                        { label: 'Pedidos', href: '/portal/pedidos', icon: <ShoppingBag className="h-5 w-5" /> },
+                        { label: 'Solicitudes', href: '/portal/solicitudes', icon: <ClipboardList className="h-5 w-5" /> },
+                        { label: 'Radicación', href: '/portal/radicacion', icon: <FileText className="h-5 w-5" /> },
+                        { label: 'Documentos', href: '/portal/documentos', icon: <FolderOpen className="h-5 w-5" /> },
+                        { label: 'Notificaciones', href: '/portal/notificaciones', icon: <Bell className="h-5 w-5" /> },
+                      ].map((link) => (
+                        <Link key={link.href} href={link.href} onClick={onClose}
+                          className="flex items-center gap-3 py-3 px-3 rounded-xl text-sm font-medium text-stone-700 hover:text-[#C4956A] hover:bg-[#C4956A]/5 transition-all">
+                          <span className="text-stone-400">{link.icon}</span>
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
