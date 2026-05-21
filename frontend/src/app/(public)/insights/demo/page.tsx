@@ -1,180 +1,247 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Eye, Users, ShoppingBag, ClipboardList, Shield, MessageCircle,
-  BarChart3, TrendingUp, Globe, Brain, Zap, Leaf, FileText,
-  Building2, Search, ArrowRight,
+  Eye, ShoppingBag, MessageCircle, Globe, ArrowRight, Leaf,
+  FileText, Zap, Wind, Recycle, Shield, Users, Building2,
+  Brain, Sparkles, CheckCircle2, BarChart3, TrendingUp,
 } from 'lucide-react';
-import {
-  ExecutiveInsightStatCard,
-  ExecutiveFunnelChart,
-  ExecutiveSustainabilityBlock,
-  ExecutiveSmartCityBlock,
-  ExecutiveModeBadge,
-  ExecutiveTrendChart,
-} from '@/components/insights';
+import { AnimatedCounter } from '@/components/insights/AnimatedCounter';
 
-interface InsightsData {
-  summary: Record<string, number | string>;
-  funnel: Array<{ stage: string; count: number; percentage: number }>;
-  charts: { monthlyTrend: Array<{ month: string; visits: number; conversions: number; orders: number }> };
-  sustainability: Record<string, number>;
-  smartCity: { readinessIndex: number; pillars: Array<{ name: string; score: number; description: string }> };
-  highlights: Array<{ key: string; title: string; description: string; icon: string }>;
+// ── Simulation Logic ──────────────────────────────────────────────────────────
+
+function calculateResults(visits: number, aiChats: number, campaign: string, aiActive: boolean, zeroPaper: boolean, ecoPackaging: boolean) {
+  const campaignMultiplier = { normal: 1, alta: 1.4, lanzamiento: 1.8, temporada: 2.2 }[campaign] || 1;
+  const aiBoost = aiActive ? 1.35 : 1;
+
+  const conversionBase = 0.009 * campaignMultiplier * aiBoost;
+  const orders = Math.round(visits * conversionBase);
+  const conversionRate = Math.round(conversionBase * 1000) / 10;
+  const co2Avoided = zeroPaper ? Math.round(visits * 0.12) : Math.round(visits * 0.04);
+  const docsAvoided = zeroPaper ? Math.round(orders * 15) : 0;
+  const traceability = aiActive ? 100 : 78;
+  const smartCityScore = Math.min(100, Math.round(
+    (zeroPaper ? 25 : 10) + (aiActive ? 25 : 12) + (ecoPackaging ? 20 : 8) + (traceability * 0.15) + (conversionRate * 2)
+  ));
+
+  return { orders, conversionRate, co2Avoided, docsAvoided, traceability, smartCityScore };
 }
 
-export default function InsightsDemoPage() {
-  const [data, setData] = useState<InsightsData | null>(null);
-  const [mode, setMode] = useState<'live' | 'demo'>('demo');
+// ── Timeline Step ─────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    fetch('/api/v1/public/insights?mode=demo')
-      .then(r => r.json())
-      .then(res => { setData(res.data); setMode(res.mode); })
-      .catch(() => {});
-  }, []);
-
-  if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAF9]">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-8 h-8 border-3 border-[#C4956A] border-t-transparent rounded-full" />
+function TimelineStep({ step, title, desc, icon: Icon, color, active }: {
+  step: number; title: string; desc: string; icon: React.ElementType; color: string; active: boolean;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: active ? 1 : 0.4, x: 0 }}
+      transition={{ delay: step * 0.1 }}
+      className={`flex items-start gap-3 ${active ? '' : 'opacity-40'}`}
+    >
+      <div className="flex flex-col items-center">
+        <motion.div className={`p-2 rounded-lg ${color} shadow-sm`}
+          animate={active ? { scale: [1, 1.1, 1] } : {}}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: step * 0.2 }}>
+          <Icon className="h-3.5 w-3.5 text-white" />
+        </motion.div>
+        {step < 6 && <div className={`w-0.5 h-6 mt-1 rounded-full ${active ? 'bg-stone-200' : 'bg-stone-100'}`} />}
       </div>
-    );
-  }
+      <div className="pt-0.5">
+        <p className="text-xs font-bold text-stone-800">{title}</p>
+        <p className="text-[10px] text-stone-400">{desc}</p>
+      </div>
+    </motion.div>
+  );
+}
 
-  const s = data.summary;
+// ── Main Demo Page ────────────────────────────────────────────────────────────
+
+export default function InsightsDemoPage() {
+  const [visits, setVisits] = useState(12000);
+  const [aiChats, setAiChats] = useState(4200);
+  const [campaign, setCampaign] = useState('normal');
+  const [aiActive, setAiActive] = useState(true);
+  const [zeroPaper, setZeroPaper] = useState(true);
+  const [ecoPackaging, setEcoPackaging] = useState(true);
+
+  const results = useMemo(() => calculateResults(visits, aiChats, campaign, aiActive, zeroPaper, ecoPackaging), [visits, aiChats, campaign, aiActive, zeroPaper, ecoPackaging]);
+
+  const timelineSteps = [
+    { title: 'Cliente visita tienda', desc: 'Acceso web/mobile', icon: Eye, color: 'bg-blue-500' },
+    { title: 'Zyla asesora', desc: 'Chatbot IA 24/7', icon: MessageCircle, color: 'bg-violet-500' },
+    { title: 'Solicitud validada', desc: 'Radicación digital', icon: FileText, color: 'bg-cyan-500' },
+    { title: 'OTP confirmado', desc: 'Identidad verificada', icon: Shield, color: 'bg-rose-500' },
+    { title: 'Pedido generado', desc: 'Checkout completo', icon: ShoppingBag, color: 'bg-[#C4956A]' },
+    { title: 'Trazabilidad activada', desc: '100% rastreable', icon: Zap, color: 'bg-amber-500' },
+    { title: 'Impacto registrado', desc: 'Sostenibilidad medida', icon: Leaf, color: 'bg-emerald-500' },
+  ];
 
   return (
     <main className="relative overflow-hidden min-h-screen bg-[#FAFAF9]">
-      {/* ═══ PITCH HERO — Large text for projection ═══ */}
-      <section className="relative py-12 lg:py-16">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#C4956A]/[0.04] via-transparent to-emerald-500/[0.03]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <img src="/images/logo.png" alt="UrbanThread AI" className="h-12 w-auto" />
-              <div className="h-8 w-px bg-stone-200" />
-              <span className="text-sm font-bold text-stone-400 uppercase tracking-widest">Executive Insights</span>
-            </div>
-            <ExecutiveModeBadge mode={mode} />
-          </div>
+      <div className="fixed inset-0 pointer-events-none opacity-[0.012]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #C4956A 0.5px, transparent 0)', backgroundSize: '40px 40px' }} />
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 leading-tight">
-              Smart Commerce<br />
-              <span className="bg-gradient-to-r from-[#C4956A] to-emerald-600 bg-clip-text text-transparent">Operational Intelligence</span>
+      {/* ═══ HERO ═══ */}
+      <section className="relative pt-8 pb-6 lg:pt-10 lg:pb-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 mb-4">
+              <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+              <span className="text-xs font-semibold text-violet-700">Interactive Simulation</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-stone-900">
+              Smart Commerce <span className="bg-gradient-to-r from-violet-500 to-purple-600 bg-clip-text text-transparent">Operational Intelligence</span>
             </h1>
-            <p className="mt-4 text-lg sm:text-xl text-stone-500 max-w-3xl mx-auto font-medium">
-              AI, automation and traceability powering retail decisions for smarter cities
+            <p className="mt-2 text-sm text-stone-500 max-w-2xl mx-auto">
+              Simula cómo UrbanThread AI convierte interacciones digitales en trazabilidad, pedidos e impacto sostenible.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ═══ KPIs — Large, readable from distance ═══ */}
-      <section className="py-8">
+      {/* ═══ SIMULATION PANEL ═══ */}
+      <section className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            <ExecutiveInsightStatCard title="Total Visits" value={Number(s.totalVisits).toLocaleString()} icon={<Eye className="h-6 w-6 text-white" />} trend={Number(s.growthVsPrevious)} color="from-blue-500 to-indigo-500" delay={0} />
-            <ExecutiveInsightStatCard title="Conversions" value={Number(s.totalConversions).toLocaleString()} icon={<TrendingUp className="h-6 w-6 text-white" />} trend={18.2} color="from-emerald-500 to-teal-500" delay={0.1} />
-            <ExecutiveInsightStatCard title="Orders" value={Number(s.totalOrders).toLocaleString()} icon={<ShoppingBag className="h-6 w-6 text-white" />} trend={12.5} color="from-[#C4956A] to-[#8B6F5E]" delay={0.2} />
-            <ExecutiveInsightStatCard title="Zyla AI Chats" value={Number(s.zylaInteractions).toLocaleString()} icon={<MessageCircle className="h-6 w-6 text-white" />} trend={34.7} color="from-violet-500 to-purple-500" delay={0.3} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* Controls */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
+              <h3 className="text-sm font-bold text-stone-900 mb-4 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-amber-500" /> Panel de Simulación
+              </h3>
+
+              {/* Visits slider */}
+              <div className="mb-4">
+                <div className="flex justify-between text-[10px] text-stone-500 mb-1">
+                  <span>Visitas</span><span className="font-bold text-stone-700">{visits.toLocaleString()}</span>
+                </div>
+                <input type="range" min="1000" max="100000" step="500" value={visits} onChange={(e) => setVisits(Number(e.target.value))}
+                  className="w-full h-1.5 rounded-full appearance-none bg-stone-200 accent-[#C4956A] cursor-pointer" />
+              </div>
+
+              {/* AI Chats slider */}
+              <div className="mb-4">
+                <div className="flex justify-between text-[10px] text-stone-500 mb-1">
+                  <span>Interacciones Zyla</span><span className="font-bold text-stone-700">{aiChats.toLocaleString()}</span>
+                </div>
+                <input type="range" min="100" max="50000" step="100" value={aiChats} onChange={(e) => setAiChats(Number(e.target.value))}
+                  className="w-full h-1.5 rounded-full appearance-none bg-stone-200 accent-violet-500 cursor-pointer" />
+              </div>
+
+              {/* Campaign */}
+              <div className="mb-4">
+                <p className="text-[10px] text-stone-500 mb-1.5">Escenario</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[['normal', 'Normal'], ['alta', 'Alta demanda'], ['lanzamiento', 'Lanzamiento'], ['temporada', 'Temporada']].map(([key, label]) => (
+                    <button key={key} onClick={() => setCampaign(key)}
+                      className={`px-2.5 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${campaign === key ? 'bg-[#C4956A] text-white shadow-sm' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Toggles */}
+              <div className="space-y-2.5 pt-3 border-t border-stone-100">
+                {[
+                  { label: 'Automatización IA activa', value: aiActive, set: setAiActive, color: 'bg-violet-500' },
+                  { label: 'Operación cero papel', value: zeroPaper, set: setZeroPaper, color: 'bg-emerald-500' },
+                  { label: 'Empaques reciclables', value: ecoPackaging, set: setEcoPackaging, color: 'bg-teal-500' },
+                ].map((toggle) => (
+                  <label key={toggle.label} className="flex items-center justify-between cursor-pointer">
+                    <span className="text-[11px] text-stone-600">{toggle.label}</span>
+                    <button onClick={() => toggle.set(!toggle.value)}
+                      className={`relative w-9 h-5 rounded-full transition-colors ${toggle.value ? toggle.color : 'bg-stone-200'}`}>
+                      <motion.div className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
+                        animate={{ left: toggle.value ? '18px' : '2px' }} transition={{ type: 'spring', stiffness: 500, damping: 30 }} />
+                    </button>
+                  </label>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Results */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
+              <h3 className="text-sm font-bold text-stone-900 mb-4 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-emerald-500" /> Resultados en Tiempo Real
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Pedidos Estimados', value: results.orders, icon: ShoppingBag, color: 'text-[#C4956A]', bg: 'bg-[#C4956A]/10' },
+                  { label: 'Conversión', value: results.conversionRate, suffix: '%', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50' },
+                  { label: 'CO₂ Evitado', value: results.co2Avoided, suffix: ' kg', icon: Wind, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                  { label: 'Docs Evitados', value: results.docsAvoided, icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50' },
+                  { label: 'Trazabilidad', value: results.traceability, suffix: '%', icon: Shield, color: 'text-violet-500', bg: 'bg-violet-50' },
+                  { label: 'Smart City Score', value: results.smartCityScore, suffix: '/100', icon: Globe, color: 'text-[#C4956A]', bg: 'bg-[#C4956A]/10' },
+                ].map((r, i) => (
+                  <motion.div key={r.label} className={`p-3 rounded-xl ${r.bg} text-center`}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 + i * 0.05 }}>
+                    <r.icon className={`h-4 w-4 ${r.color} mx-auto mb-1`} />
+                    <p className="text-lg font-extrabold text-stone-900"><AnimatedCounter value={r.value} />{r.suffix || ''}</p>
+                    <p className="text-[9px] text-stone-500 mt-0.5">{r.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Timeline */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
+              <h3 className="text-sm font-bold text-stone-900 mb-4 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-teal-500" /> Timeline Operacional
+              </h3>
+              <div className="space-y-0">
+                {timelineSteps.map((step, i) => (
+                  <TimelineStep key={step.title} step={i} title={step.title} desc={step.desc} icon={step.icon} color={step.color} active={true} />
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ═══ FUNNEL + TREND — Side by side ═══ */}
+      {/* ═══ AI INSIGHT ═══ */}
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="p-6 lg:p-8 rounded-2xl bg-white border border-stone-100 shadow-sm">
-              <h3 className="text-xl font-bold text-stone-900 mb-1">Customer Journey</h3>
-              <p className="text-sm text-stone-400 mb-6">From visits to validated customer journeys</p>
-              <ExecutiveFunnelChart data={data.funnel} />
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="p-6 lg:p-8 rounded-2xl bg-white border border-stone-100 shadow-sm">
-              <h3 className="text-xl font-bold text-stone-900 mb-1">Growth Trajectory</h3>
-              <p className="text-sm text-stone-400 mb-6">Monthly performance acceleration</p>
-              <ExecutiveTrendChart data={data.charts.monthlyTrend} />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PROJECT HIGHLIGHTS — Visual grid ═══ */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-2xl lg:text-3xl font-bold text-stone-900 text-center mb-8">
-            Platform <span className="text-[#C4956A]">Capabilities</span>
-          </motion.h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { icon: Brain, title: 'Smart Commerce', desc: 'Data-driven decisions', color: 'from-[#C4956A] to-[#8B6F5E]' },
-              { icon: Zap, title: 'AI + Automation', desc: 'Gemini 2.0, n8n flows', color: 'from-violet-500 to-purple-600' },
-              { icon: Shield, title: 'Digital Identity', desc: 'OTP + document validation', color: 'from-blue-500 to-indigo-600' },
-              { icon: Search, title: 'Full Traceability', desc: 'Every interaction tracked', color: 'from-teal-500 to-cyan-600' },
-              { icon: Leaf, title: 'Sustainability', desc: 'Zero paper, green ops', color: 'from-emerald-500 to-green-600' },
-              { icon: FileText, title: 'Paperless', desc: '100% digital operations', color: 'from-amber-500 to-orange-600' },
-              { icon: BarChart3, title: 'Intelligence', desc: 'Real-time metrics', color: 'from-rose-500 to-pink-600' },
-              { icon: Building2, title: 'Smart Cities', desc: 'Urban service layer', color: 'from-cyan-500 to-blue-600' },
-            ].map((h, i) => (
-              <motion.div key={h.title} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="p-5 rounded-2xl bg-white border border-stone-100 shadow-sm text-center hover:shadow-lg transition-all duration-300">
-                <motion.div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${h.color} shadow-md mx-auto mb-3`}
-                  animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}>
-                  <h.icon className="h-5 w-5 text-white" />
-                </motion.div>
-                <h4 className="text-sm font-bold text-stone-800">{h.title}</h4>
-                <p className="text-[11px] text-stone-400 mt-1">{h.desc}</p>
+          <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="p-6 rounded-2xl bg-gradient-to-r from-violet-50/80 via-purple-50/50 to-indigo-50/30 border border-violet-100/50">
+            <div className="flex items-start gap-3">
+              <motion.div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md flex-shrink-0"
+                animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+                <Brain className="h-5 w-5 text-white" />
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ SUSTAINABILITY ═══ */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ExecutiveSustainabilityBlock data={data.sustainability as never} />
-        </div>
-      </section>
-
-      {/* ═══ SMART CITY ═══ */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ExecutiveSmartCityBlock readinessIndex={data.smartCity.readinessIndex} pillars={data.smartCity.pillars} />
-        </div>
-      </section>
-
-      {/* ═══ CLOSING — High impact for jury ═══ */}
-      <section className="py-16 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] text-white">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <motion.div
-              className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-[#C4956A] to-[#D4A76A] shadow-2xl mb-6"
-              animate={{ scale: [1, 1.05, 1], boxShadow: ['0 10px 40px rgba(196,149,106,0.3)', '0 20px 60px rgba(196,149,106,0.5)', '0 10px 40px rgba(196,149,106,0.3)'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <Globe className="h-8 w-8 text-white" />
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
-              UrbanThread AI transforms customer interactions<br />
-              into <span className="text-[#C4956A]">operational intelligence</span>
-            </h2>
-            <p className="mt-4 text-white/60 max-w-2xl mx-auto text-base">
-              Smart Commerce powered by AI, automation and traceability — from retail experience to urban intelligence for smarter, more sustainable cities.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-white/40">
-              {['AI-Powered', 'Zero Paper', 'Full Traceability', 'Automated Flows', 'Sustainable', 'Smart City Ready'].map((tag) => (
-                <span key={tag} className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5">{tag}</span>
-              ))}
+              <div>
+                <p className="text-xs font-bold text-violet-800 mb-1">AI Executive Insight</p>
+                <p className="text-sm text-stone-700 leading-relaxed">
+                  Con este escenario ({visits.toLocaleString()} visitas, {campaign === 'normal' ? 'operación normal' : campaign === 'alta' ? 'alta demanda' : campaign === 'lanzamiento' ? 'lanzamiento de colección' : 'temporada alta'}),
+                  UrbanThread AI {aiActive ? 'maximiza la conversión mediante automatización IA' : 'opera con flujos manuales'},
+                  {zeroPaper ? ' elimina completamente el uso de papel' : ' mantiene procesos mixtos'},
+                  {ecoPackaging ? ' y garantiza empaques 100% reciclables' : ''}.
+                  El resultado: <strong>{results.orders} pedidos estimados</strong>, <strong>{results.co2Avoided} kg de CO₂ evitados</strong> y un
+                  <strong> Smart City Score de {results.smartCityScore}/100</strong> — fortaleciendo el indicador de sostenibilidad urbana.
+                </p>
+              </div>
             </div>
-            <div className="mt-8">
-              <a href="/" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#C4956A] text-white font-bold text-sm hover:bg-[#D4A76A] transition-colors shadow-lg">
-                Explore the Platform <ArrowRight className="h-4 w-4" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══ CLOSING ═══ */}
+      <section className="py-10 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] text-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+            <Building2 className="h-7 w-7 text-[#C4956A] mx-auto mb-3" />
+            <h2 className="text-lg font-bold">UrbanThread AI transforms customer interactions into <span className="text-[#C4956A]">operational intelligence</span></h2>
+            <p className="mt-2 text-white/50 text-xs max-w-md mx-auto">Smart Commerce powered by AI, automation and traceability — from retail experience to urban intelligence.</p>
+            <div className="mt-5 flex items-center justify-center gap-3">
+              <a href="/insights" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#C4956A] text-white text-xs font-semibold hover:bg-[#D4A76A] transition-colors">
+                View Live Dashboard <ArrowRight className="h-3 w-3" />
+              </a>
+              <a href="/" className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-white/20 text-white/70 text-xs font-semibold hover:bg-white/10 transition-colors">
+                Explore Platform
               </a>
             </div>
           </motion.div>

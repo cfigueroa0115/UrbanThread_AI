@@ -7,3 +7,4 @@ export { ExecutiveModeBadge } from './ExecutiveModeBadge';
 export { ExecutiveTrendChart } from './ExecutiveTrendChart';
 export { ExecutiveDonutChart } from './ExecutiveDonutChart';
 export { ExecutiveBarChart } from './ExecutiveBarChart';
+export { AnimatedCounter } from './AnimatedCounter';
