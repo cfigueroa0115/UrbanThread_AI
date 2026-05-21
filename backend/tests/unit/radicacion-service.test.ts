@@ -121,34 +121,34 @@ describe('Radicacion Service', () => {
   // ── generateRadicationNumber ─────────────────────────────────────────
 
   describe('generateRadicationNumber', () => {
-    it('generates radication number with RAD prefix', () => {
-      const number = generateRadicationNumber();
+    it('generates radication number with RAD prefix', async () => {
+      const number = await generateRadicationNumber();
       expect(number).toMatch(/^RAD-/);
     });
 
-    it('generates radication number with current year', () => {
-      const number = generateRadicationNumber();
+    it('generates radication number with current year', async () => {
+      const number = await generateRadicationNumber();
       const year = new Date().getFullYear();
       expect(number).toContain(String(year));
     });
 
-    it('generates radication number with format RAD-YYYY-NNNNNN', () => {
-      const number = generateRadicationNumber();
+    it('generates radication number with format RAD-YYYY-NNNNNN', async () => {
+      const number = await generateRadicationNumber();
       expect(number).toMatch(/^RAD-\d{4}-\d{6}$/);
     });
 
-    it('generates sequential numbers', () => {
-      const first = generateRadicationNumber();
-      const second = generateRadicationNumber();
-      const third = generateRadicationNumber();
+    it('generates sequential numbers', async () => {
+      const first = await generateRadicationNumber();
+      const second = await generateRadicationNumber();
+      const third = await generateRadicationNumber();
 
       expect(first).toMatch(/-000001$/);
       expect(second).toMatch(/-000002$/);
       expect(third).toMatch(/-000003$/);
     });
 
-    it('pads sequence number to 6 digits', () => {
-      const number = generateRadicationNumber();
+    it('pads sequence number to 6 digits', async () => {
+      const number = await generateRadicationNumber();
       const parts = number.split('-');
       expect(parts[2]).toHaveLength(6);
     });
