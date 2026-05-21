@@ -6,7 +6,7 @@ import {
   Eye, Users, ShoppingBag, ClipboardList, Shield, MessageCircle,
   BarChart3, TrendingUp, Globe, ArrowRight, Leaf, FileText,
   Radio, Clock, MapPin, Zap, Recycle, TreePine, Wind, Building2,
-  Brain, Sparkles,
+  Brain, Sparkles, Activity, Target, Layers,
 } from 'lucide-react';
 import {
   ExecutiveFunnelChart,
@@ -17,90 +17,82 @@ import {
 import { AnimatedCounter } from '@/components/insights/AnimatedCounter';
 import { periodData, funnelByPeriod, aiRecommendations, channelDistribution, trendData, type PeriodData } from '@/components/insights/insightsData';
 
-// ── Smart City Metric Card ────────────────────────────────────────────────────
+// ── Command Center KPI Card ───────────────────────────────────────────────────
 
-function SmartCityMetricCard({ icon: Icon, label, value, suffix, desc, color, bg, delay }: {
-  icon: React.ElementType; label: string; value: number; suffix?: string; desc: string; color: string; bg: string; delay: number;
+function CommandKPI({ title, value, suffix, trend, desc, source, icon: Icon, gradient, delay }: {
+  title: string; value: number; suffix?: string; trend?: number; desc: string; source: string;
+  icon: React.ElementType; gradient: string; delay: number;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.4 }}
-      whileHover={{ y: -3, scale: 1.02 }}
-      className={`relative p-5 rounded-2xl ${bg} border border-white/60 text-center overflow-hidden group cursor-default`}
-    >
-      {/* Glow border */}
-      <motion.div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{ background: `conic-gradient(from 0deg, transparent 40%, ${color.replace('text-', 'rgba(').replace('500', '0.3)')}, transparent 60%)`, WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', padding: '1.5px' }}
-        animate={{ rotate: [0, 360] }} transition={{ duration: 5, repeat: Infinity, ease: 'linear' }} />
-      <motion.div
-        animate={{ scale: [1, 1.08, 1] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay }}
-      >
-        <Icon className={`h-6 w-6 ${color} mx-auto mb-2`} />
-      </motion.div>
-      <p className="text-2xl font-extrabold text-stone-900">
-        <AnimatedCounter value={value} />{suffix}
-      </p>
-      <p className="text-[11px] font-bold text-stone-700 mt-1">{label}</p>
-      <p className="text-[9px] text-stone-400 mt-0.5">{desc}</p>
-    </motion.div>
-  );
-}
-
-// ── KPI Card ──────────────────────────────────────────────────────────────────
-
-function KPICard({ title, value, suffix, trend, description, source, icon: Icon, color, delay }: {
-  title: string; value: number; suffix?: string; trend?: number; description: string; source: string; icon: React.ElementType; color: string; delay: number;
-}) {
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.4 }}
-      whileHover={{ y: -2 }}
-      className="relative p-5 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 group overflow-hidden"
-    >
-      <div className="relative flex items-start justify-between mb-2">
-        <motion.div className={`p-2 rounded-xl bg-gradient-to-br ${color} shadow-sm`}
-          animate={{ scale: [1, 1.04, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}>
+    <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.35 }} whileHover={{ y: -2 }}
+      className="relative p-5 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)] transition-all duration-300 group overflow-hidden">
+      {/* Top glow line */}
+      <div className={`absolute top-0 left-4 right-4 h-[2px] rounded-full bg-gradient-to-r ${gradient} opacity-60 group-hover:opacity-100 transition-opacity`} />
+      <div className="flex items-start justify-between mb-3">
+        <div className={`p-2 rounded-xl bg-gradient-to-br ${gradient} shadow-sm`}>
           <Icon className="h-4 w-4 text-white" />
-        </motion.div>
+        </div>
         {trend !== undefined && (
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? 'text-emerald-700 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? 'text-emerald-700 bg-emerald-50/80' : 'text-red-600 bg-red-50/80'}`}>
             {trend >= 0 ? '↑' : '↓'}{Math.abs(trend)}%
           </span>
         )}
       </div>
-      <p className="text-2xl font-extrabold text-stone-900 leading-none">
-        <AnimatedCounter value={value} /><span className="text-sm text-stone-400 ml-0.5">{suffix}</span>
+      <p className="text-[26px] font-extrabold text-stone-900 leading-none tracking-tight">
+        <AnimatedCounter value={value} /><span className="text-sm text-stone-400 ml-0.5 font-semibold">{suffix}</span>
       </p>
-      <p className="text-xs font-semibold text-stone-700 mt-1.5">{title}</p>
-      <p className="text-[10px] text-stone-400 mt-0.5 leading-snug">{description}</p>
-      <p className="text-[8px] text-stone-300 mt-2 uppercase tracking-wider">{source}</p>
+      <p className="text-[11px] font-bold text-stone-700 mt-2">{title}</p>
+      <p className="text-[9px] text-stone-400 mt-0.5 leading-snug">{desc}</p>
+      <p className="text-[8px] text-stone-300 mt-2 uppercase tracking-widest font-medium">{source}</p>
+    </motion.div>
+  );
+}
+
+// ── Smart City Impact Card ────────────────────────────────────────────────────
+
+function SmartCityCard({ icon: Icon, label, value, suffix, desc, color, delay }: {
+  icon: React.ElementType; label: string; value: number; suffix?: string; desc: string; color: string; delay: number;
+}) {
+  const bgMap: Record<string, string> = {
+    'text-blue-500': 'bg-blue-500/[0.06] border-blue-100/60',
+    'text-emerald-500': 'bg-emerald-500/[0.06] border-emerald-100/60',
+    'text-violet-500': 'bg-violet-500/[0.06] border-violet-100/60',
+    'text-amber-500': 'bg-amber-500/[0.06] border-amber-100/60',
+    'text-teal-500': 'bg-teal-500/[0.06] border-teal-100/60',
+    'text-[#C4956A]': 'bg-[#C4956A]/[0.06] border-[#C4956A]/20',
+  };
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.35 }} whileHover={{ y: -3, scale: 1.02 }}
+      className={`relative p-5 rounded-2xl border ${bgMap[color] || 'bg-stone-50 border-stone-100'} text-center group cursor-default overflow-hidden`}>
+      {/* Shimmer */}
+      <motion.div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%)' }}
+        animate={{ x: ['-100%', '200%'] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }} />
+      <motion.div animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay }}>
+        <Icon className={`h-7 w-7 ${color} mx-auto mb-2.5`} />
+      </motion.div>
+      <p className="text-2xl font-extrabold text-stone-900"><AnimatedCounter value={value} />{suffix}</p>
+      <p className="text-[11px] font-bold text-stone-700 mt-1.5">{label}</p>
+      <p className="text-[9px] text-stone-400 mt-0.5">{desc}</p>
     </motion.div>
   );
 }
 
 // ── AI Recommendation Card ────────────────────────────────────────────────────
 
-function AIRecommendationCard({ title, description, delay }: { title: string; description: string; delay: number }) {
+function AIInsightCard({ title, description, delay }: { title: string; description: string; delay: number }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-      className="flex gap-3 p-4 rounded-xl bg-gradient-to-r from-violet-50/80 to-purple-50/50 border border-violet-100/50"
-    >
-      <motion.div className="flex-shrink-0 p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm"
-        animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay }}>
+    <motion.div initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+      transition={{ delay }} whileHover={{ x: 2 }}
+      className="flex gap-3.5 p-4 rounded-xl bg-gradient-to-r from-violet-50/60 to-indigo-50/30 border border-violet-100/40 hover:border-violet-200/60 transition-all duration-300">
+      <motion.div className="flex-shrink-0 p-2 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm"
+        animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay }}>
         <Brain className="h-3.5 w-3.5 text-white" />
       </motion.div>
       <div>
-        <p className="text-xs font-bold text-stone-800">{title}</p>
+        <p className="text-[11px] font-bold text-stone-800">{title}</p>
         <p className="text-[10px] text-stone-500 mt-0.5 leading-relaxed">{description}</p>
       </div>
     </motion.div>
@@ -113,147 +105,212 @@ export default function InsightsPage() {
   const [period, setPeriod] = useState<string>('7d');
   const data: PeriodData = periodData[period];
   const funnel = funnelByPeriod[period];
-
   const handlePeriod = useCallback((p: string) => setPeriod(p), []);
-
-  const periodLabels: Record<string, string> = { today: 'Hoy', '7d': '7 días', '30d': '30 días', month: 'Mes actual' };
+  const periodLabels: Record<string, string> = { today: 'Hoy', '7d': '7 días', '30d': '30 días', month: 'Mes' };
 
   return (
-    <main className="relative overflow-hidden min-h-screen bg-[#FAFAF9]">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.012]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #C4956A 0.5px, transparent 0)', backgroundSize: '40px 40px' }} />
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-b from-[#FAFAF9] via-white to-[#FAFAF9]">
+      {/* Subtle grid */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.018]" style={{ backgroundImage: 'linear-gradient(rgba(196,149,106,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(196,149,106,0.3) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
 
-      {/* ═══ COMPACT HERO ═══ */}
-      <section className="relative pt-6 pb-3 lg:pt-8 lg:pb-4">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      {/* ═══ COMMAND CENTER HERO ═══ */}
+      <section className="relative pt-6 pb-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900">
-                UrbanThread <span className="bg-gradient-to-r from-[#C4956A] to-[#8B6F5E] bg-clip-text text-transparent">Executive Insights</span>
-              </h1>
-              <p className="text-xs text-stone-400 mt-0.5">Operational intelligence in action — AI, automation and traceability powering Smart Commerce for intelligent cities.</p>
+              <div className="flex items-center gap-2.5 mb-2">
+                <motion.div className="p-2 rounded-xl bg-gradient-to-br from-[#C4956A] to-[#8B6F5E] shadow-md"
+                  animate={{ boxShadow: ['0 4px 12px rgba(196,149,106,0.2)', '0 6px 20px rgba(196,149,106,0.4)', '0 4px 12px rgba(196,149,106,0.2)'] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+                  <Activity className="h-4 w-4 text-white" />
+                </motion.div>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 leading-tight">
+                    UrbanThread <span className="bg-gradient-to-r from-[#C4956A] to-[#8B6F5E] bg-clip-text text-transparent">Executive Insights</span>
+                  </h1>
+                  <p className="text-[11px] text-stone-400 mt-0.5">Operational intelligence for Smart Commerce · From retail activity to urban intelligence</p>
+                </div>
+              </div>
             </div>
-            <a href="/insights/demo" className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors">
-              <Sparkles className="h-3 w-3" /> Interactive Demo
+            <a href="/insights/demo" className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#C4956A]/30 text-[#8B6F5E] text-[11px] font-semibold hover:bg-[#C4956A]/5 transition-colors">
+              <Target className="h-3 w-3" /> Pitch Mode
             </a>
           </motion.div>
         </div>
       </section>
 
       {/* ═══ CONTROL BAR ═══ */}
-      <section className="sticky top-[80px] z-30 py-2.5 bg-white/80 backdrop-blur-md border-y border-stone-100/80">
+      <section className="sticky top-[80px] z-30 py-2 bg-white/85 backdrop-blur-lg border-y border-stone-100/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-stone-100/80">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-1 p-0.5 rounded-lg bg-stone-100/70">
               {Object.entries(periodLabels).map(([key, label]) => (
                 <button key={key} onClick={() => handlePeriod(key)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${period === key ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>
+                  className={`px-3 py-1.5 rounded-md text-[11px] font-semibold transition-all duration-200 ${period === key ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
                   {label}
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-3 text-[11px] text-stone-400">
-              <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />Bogotá</span>
+            <div className="flex items-center gap-3 text-[10px] text-stone-400">
+              <span className="hidden sm:flex items-center gap-1"><MapPin className="h-3 w-3" />Bogotá, CO</span>
               <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</span>
-              <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-                <motion.div className="w-1.5 h-1.5 rounded-full bg-emerald-500" animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
-                <Radio className="h-3 w-3" /> Live
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50/80 text-emerald-700 font-bold border border-emerald-200/60">
+                <motion.div className="w-1.5 h-1.5 rounded-full bg-emerald-500" animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />
+                <Radio className="h-2.5 w-2.5" /> Live
               </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══ SMART CITY METRICS — FIRST ═══ */}
-      <section className="py-8">
+      {/* ═══ SMART CITY IMPACT — PRIMARY SECTION ═══ */}
+      <section className="py-7">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-5">
-            <Building2 className="h-5 w-5 text-[#C4956A]" />
-            <h2 className="text-lg font-bold text-stone-900">Smart City <span className="text-[#C4956A]">Impact</span></h2>
-            <span className="text-[9px] text-stone-400 ml-2 uppercase tracking-wider">{periodLabels[period]}</span>
+          <div className="flex items-center gap-2 mb-4">
+            <Globe className="h-4 w-4 text-[#C4956A]" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">Smart City Impact</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#C4956A]/20 to-transparent ml-2" />
           </div>
           <AnimatePresence mode="wait">
-            <motion.div key={period + '-sc'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+            <motion.div key={period + '-sc'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <SmartCityMetricCard icon={FileText} label="Cero Papel" value={data.ceroPapel} suffix="%" desc="Operación digital" color="text-blue-500" bg="bg-blue-50/80" delay={0} />
-              <SmartCityMetricCard icon={Wind} label="CO₂ Evitado" value={data.co2} suffix=" kg" desc="Estimado periodo" color="text-emerald-500" bg="bg-emerald-50/80" delay={0.05} />
-              <SmartCityMetricCard icon={BarChart3} label="Trazabilidad" value={data.trazabilidad} suffix="%" desc="Digital completa" color="text-violet-500" bg="bg-violet-50/80" delay={0.1} />
-              <SmartCityMetricCard icon={Zap} label="Automatización IA" value={data.automatizacion} suffix="" desc="Procesos activos" color="text-amber-500" bg="bg-amber-50/80" delay={0.15} />
-              <SmartCityMetricCard icon={Recycle} label="Empaques" value={data.empaques} suffix="%" desc="Reciclables" color="text-teal-500" bg="bg-teal-50/80" delay={0.2} />
-              <SmartCityMetricCard icon={Globe} label="Smart City Score" value={data.smartCityScore} suffix="/100" desc="Readiness Index" color="text-[#C4956A]" bg="bg-[#C4956A]/[0.08]" delay={0.25} />
+              <SmartCityCard icon={FileText} label="Operación Cero Papel" value={data.ceroPapel} suffix="%" desc="100% digital" color="text-blue-500" delay={0} />
+              <SmartCityCard icon={Wind} label="CO₂ Evitado" value={data.co2} suffix=" kg" desc="Periodo actual" color="text-emerald-500" delay={0.04} />
+              <SmartCityCard icon={Layers} label="Trazabilidad Digital" value={data.trazabilidad} suffix="%" desc="Transacciones rastreables" color="text-violet-500" delay={0.08} />
+              <SmartCityCard icon={Zap} label="Automatización IA" value={data.automatizacion} suffix=" procesos" desc="Flujos activos" color="text-amber-500" delay={0.12} />
+              <SmartCityCard icon={Recycle} label="Empaques Reciclables" value={data.empaques} suffix="%" desc="Cadena sostenible" color="text-teal-500" delay={0.16} />
+              <SmartCityCard icon={Building2} label="Smart City Score" value={data.smartCityScore} suffix="/100" desc="Readiness Index" color="text-[#C4956A]" delay={0.2} />
             </motion.div>
           </AnimatePresence>
         </div>
       </section>
 
-      {/* ═══ OPERATIONAL KPIs ═══ */}
+      {/* ═══ OPERATIONAL INTELLIGENCE KPIs ═══ */}
       <section className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-5">
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
-            <h2 className="text-lg font-bold text-stone-900">Operational <span className="text-emerald-600">Intelligence</span></h2>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="h-4 w-4 text-emerald-600" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">Operational Intelligence</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-emerald-500/20 to-transparent ml-2" />
           </div>
           <AnimatePresence mode="wait">
-            <motion.div key={period + '-kpi'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+            <motion.div key={period + '-kpi'} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
               className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <KPICard title="Visitas" value={data.visitas} trend={data.growthVisits} description="Tráfico total plataforma" source="Analytics · Periodo" icon={Eye} color="from-blue-500 to-indigo-600" delay={0} />
-              <KPICard title="Interacciones Zyla" value={data.aiChats} trend={data.growthAI} description="Conversaciones con agente IA" source="Chatbot Gemini 2.0" icon={MessageCircle} color="from-violet-500 to-purple-600" delay={0.05} />
-              <KPICard title="Solicitudes" value={data.solicitudes} trend={8.3} description="Radicaciones digitales" source="Radicación · Paperless" icon={ClipboardList} color="from-cyan-500 to-teal-600" delay={0.1} />
-              <KPICard title="OTP Exitosos" value={data.otpExitosos} trend={15.2} description="Autenticaciones seguras" source="Identity · OTP" icon={Shield} color="from-rose-500 to-pink-600" delay={0.15} />
-              <KPICard title="Pedidos" value={data.orders} trend={data.growthOrders} description="Órdenes completadas" source="Commerce · Checkout" icon={ShoppingBag} color="from-[#C4956A] to-[#8B6F5E]" delay={0.2} />
-              <KPICard title="Tasa de Conversión" value={data.conversionRate} suffix="%" description="Pedidos / Visitas" source="Funnel · Ratio real" icon={TrendingUp} color="from-amber-500 to-orange-600" delay={0.25} />
-              <KPICard title="Clientes Activos" value={data.clients} trend={5.8} description="Registrados y verificados" source="Base de datos · Neon" icon={Users} color="from-emerald-500 to-green-600" delay={0.3} />
-              <KPICard title="Impacto Sostenible" value={data.co2} suffix=" kg CO₂" description="Emisiones evitadas" source="Sustainability · Green" icon={Leaf} color="from-green-500 to-emerald-600" delay={0.35} />
+              <CommandKPI title="Visitas" value={data.visitas} trend={data.growthVisits} desc="Tráfico total plataforma" source="Analytics" icon={Eye} gradient="from-blue-500 to-indigo-600" delay={0} />
+              <CommandKPI title="Interacciones Zyla" value={data.aiChats} trend={data.growthAI} desc="Conversaciones agente IA" source="Gemini 2.0 Flash" icon={MessageCircle} gradient="from-violet-500 to-purple-600" delay={0.04} />
+              <CommandKPI title="Solicitudes" value={data.solicitudes} trend={8.3} desc="Radicaciones paperless" source="Radicación Digital" icon={ClipboardList} gradient="from-cyan-500 to-teal-600" delay={0.08} />
+              <CommandKPI title="OTP Exitosos" value={data.otpExitosos} trend={15.2} desc="Autenticaciones seguras" source="Identity Layer" icon={Shield} gradient="from-rose-500 to-pink-600" delay={0.12} />
+              <CommandKPI title="Pedidos" value={data.orders} trend={data.growthOrders} desc="Órdenes completadas" source="Commerce Engine" icon={ShoppingBag} gradient="from-[#C4956A] to-[#8B6F5E]" delay={0.16} />
+              <CommandKPI title="Conversión" value={data.conversionRate} suffix="%" desc="Pedidos / Visitas" source="Funnel Ratio" icon={TrendingUp} gradient="from-amber-500 to-orange-600" delay={0.2} />
+              <CommandKPI title="Clientes Activos" value={data.clients} trend={5.8} desc="Verificados en plataforma" source="Neon PostgreSQL" icon={Users} gradient="from-emerald-500 to-green-600" delay={0.24} />
+              <CommandKPI title="Flujos Automatizados" value={data.automatizacion} desc="Procesos sin intervención" source="n8n + IA" icon={Sparkles} gradient="from-indigo-500 to-blue-600" delay={0.28} />
             </motion.div>
           </AnimatePresence>
         </div>
       </section>
 
-      {/* ═══ CHARTS ═══ */}
-      <section className="py-8">
+      {/* ═══ CHARTS: FUNNEL + TREND ═══ */}
+      <section className="py-7">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
-              <h3 className="text-sm font-bold text-stone-900 mb-0.5">Commercial Funnel</h3>
-              <p className="text-[10px] text-stone-400 mb-4">Visitas → Zyla → Solicitudes → Pedidos · {periodLabels[period]}</p>
+              className="p-6 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.03)]">
+              <div className="flex items-center gap-2 mb-1">
+                <Target className="h-3.5 w-3.5 text-[#C4956A]" />
+                <h3 className="text-sm font-bold text-stone-900">Customer Journey Funnel</h3>
+              </div>
+              <p className="text-[9px] text-stone-400 mb-5">Visitas → Zyla → Solicitudes → Pedidos · {periodLabels[period]}</p>
               <ExecutiveFunnelChart data={funnel} />
             </motion.div>
-
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
-              <h3 className="text-sm font-bold text-stone-900 mb-0.5">Growth Trajectory</h3>
-              <p className="text-[10px] text-stone-400 mb-4">Monthly visits & conversions</p>
+              className="p-6 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.03)]">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                <h3 className="text-sm font-bold text-stone-900">Growth Trajectory</h3>
+              </div>
+              <p className="text-[9px] text-stone-400 mb-5">Monthly acceleration · Visits & Conversions</p>
               <ExecutiveTrendChart data={trendData} />
             </motion.div>
+          </div>
+        </div>
+      </section>
 
+      {/* ═══ SUSTAINABILITY & PAPERLESS + CHANNELS ═══ */}
+      <section className="py-7">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Leaf className="h-4 w-4 text-emerald-600" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">Sustainability & Paperless Operations</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-emerald-500/20 to-transparent ml-2" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Sustainability metrics */}
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
-              <h3 className="text-sm font-bold text-stone-900 mb-0.5">Omnichannel Distribution</h3>
-              <p className="text-[10px] text-stone-400 mb-4">Customer interaction channels</p>
-              <ExecutiveDonutChart data={channelDistribution} title="Channels" />
-            </motion.div>
-
-            {/* AI Recommendations */}
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              className="p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-stone-100/80 shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
-              <div className="flex items-center gap-2 mb-4">
-                <Brain className="h-4 w-4 text-violet-500" />
-                <h3 className="text-sm font-bold text-stone-900">AI Executive Recommendations</h3>
-              </div>
-              <div className="space-y-2.5">
-                {aiRecommendations.map((rec, i) => (
-                  <AIRecommendationCard key={rec.title} title={rec.title} description={rec.description} delay={i * 0.08} />
+              className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/40 via-white to-teal-50/20 border border-emerald-100/40">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { icon: TreePine, label: 'Hojas Ahorradas', value: `${(data.solicitudes * 15).toLocaleString()}`, color: 'text-emerald-600' },
+                  { icon: Wind, label: 'CO₂ Evitado', value: `${data.co2.toLocaleString()} kg`, color: 'text-teal-600' },
+                  { icon: FileText, label: 'Procesos Digitales', value: `${data.automatizacion}`, color: 'text-blue-600' },
+                  { icon: Recycle, label: 'Empaques Eco', value: `${data.empaques}%`, color: 'text-amber-600' },
+                ].map((m, i) => (
+                  <div key={m.label} className="p-3 rounded-xl bg-white/80 border border-stone-100/50">
+                    <m.icon className={`h-4 w-4 ${m.color} mb-1.5`} />
+                    <p className="text-lg font-extrabold text-stone-900">{m.value}</p>
+                    <p className="text-[9px] text-stone-500">{m.label}</p>
+                  </div>
                 ))}
               </div>
+              <div className="mt-4 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100/40">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] font-semibold text-stone-600">Low-Carbon Operations Score</span>
+                  <span className="text-[10px] font-bold text-emerald-600">{Math.round(data.smartCityScore * 0.92)}/100</span>
+                </div>
+                <div className="h-2 bg-white rounded-full overflow-hidden">
+                  <motion.div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
+                    initial={{ width: 0 }} whileInView={{ width: `${data.smartCityScore * 0.92}%` }} viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }} />
+                </div>
+              </div>
             </motion.div>
+            {/* Channel distribution */}
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              className="p-6 rounded-2xl bg-white border border-stone-100/60 shadow-[0_1px_12px_rgba(0,0,0,0.03)]">
+              <div className="flex items-center gap-2 mb-1">
+                <Layers className="h-3.5 w-3.5 text-violet-500" />
+                <h3 className="text-sm font-bold text-stone-900">Omnichannel Distribution</h3>
+              </div>
+              <p className="text-[9px] text-stone-400 mb-5">Interaction channels breakdown</p>
+              <ExecutiveDonutChart data={channelDistribution} title="Channels" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ AI EXECUTIVE RECOMMENDATIONS ═══ */}
+      <section className="py-7">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Brain className="h-4 w-4 text-violet-500" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">AI Executive Recommendations</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-violet-500/20 to-transparent ml-2" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {aiRecommendations.map((rec, i) => (
+              <AIInsightCard key={rec.title} title={rec.title} description={rec.description} delay={i * 0.06} />
+            ))}
           </div>
         </div>
       </section>
 
       {/* ═══ SMART CITY DEEP DIVE ═══ */}
-      <section className="py-8">
+      <section className="py-7">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Building2 className="h-4 w-4 text-[#C4956A]" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">Smart City Contribution</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-[#C4956A]/20 to-transparent ml-2" />
+          </div>
           <ExecutiveSmartCityBlock readinessIndex={data.smartCityScore} pillars={[
             { name: 'Servicios Digitales', score: 95, description: 'Portal 100% digital, OTP, chatbot 24/7' },
             { name: 'Eficiencia Operativa', score: 88, description: 'Automatización n8n, flujos inteligentes' },
@@ -265,16 +322,53 @@ export default function InsightsPage() {
         </div>
       </section>
 
+      {/* ═══ EXECUTIVE HIGHLIGHTS ═══ */}
+      <section className="py-7">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="h-4 w-4 text-amber-500" />
+            <h2 className="text-sm font-bold text-stone-800 uppercase tracking-wide">Executive Highlights</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-amber-500/20 to-transparent ml-2" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { icon: Brain, title: 'Smart Commerce', desc: 'Data → Decisions', color: 'from-[#C4956A] to-[#8B6F5E]' },
+              { icon: Zap, title: 'AI + Automation', desc: 'Gemini · n8n · OTP', color: 'from-violet-500 to-indigo-600' },
+              { icon: Shield, title: 'Digital Identity', desc: 'Secure verification', color: 'from-blue-500 to-cyan-600' },
+              { icon: Eye, title: 'Full Traceability', desc: '100% documented', color: 'from-teal-500 to-emerald-600' },
+              { icon: Leaf, title: 'Sustainability', desc: 'Zero paper · Green ops', color: 'from-emerald-500 to-green-600' },
+              { icon: FileText, title: 'Paperless Ops', desc: 'Digital-first always', color: 'from-amber-500 to-orange-600' },
+              { icon: BarChart3, title: 'Intelligence', desc: 'Real-time metrics', color: 'from-rose-500 to-pink-600' },
+              { icon: Globe, title: 'Smart Cities', desc: 'Urban service layer', color: 'from-indigo-500 to-blue-600' },
+            ].map((h, i) => (
+              <motion.div key={h.title} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }} whileHover={{ y: -2 }}
+                className="p-4 rounded-xl bg-white border border-stone-100/60 shadow-[0_1px_8px_rgba(0,0,0,0.03)] text-center hover:shadow-md transition-all duration-300">
+                <div className={`inline-flex p-2 rounded-lg bg-gradient-to-br ${h.color} shadow-sm mb-2`}>
+                  <h.icon className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-[11px] font-bold text-stone-800">{h.title}</p>
+                <p className="text-[9px] text-stone-400 mt-0.5">{h.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══ CLOSING ═══ */}
-      <section className="py-10 bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] text-white">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Globe className="h-8 w-8 text-[#C4956A] mx-auto mb-3" />
-            <h2 className="text-lg sm:text-xl font-bold">From retail experience to <span className="text-[#C4956A]">urban intelligence</span></h2>
-            <p className="mt-2 text-white/50 max-w-lg mx-auto text-xs">Smart Commerce powered by AI, automation and traceability for smarter, more sustainable cities.</p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[9px] font-semibold text-white/30">
-              {['AI-Powered', 'Zero Paper', 'Full Traceability', 'Automated', 'Sustainable', 'Smart City Ready'].map((tag) => (
-                <span key={tag} className="px-2 py-1 rounded-full border border-white/10 bg-white/5">{tag}</span>
+      <section className="py-10 bg-gradient-to-br from-[#1A1A1A] via-[#222] to-[#1A1A1A] text-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+            <motion.div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-[#C4956A] to-[#D4A76A] shadow-xl mb-4"
+              animate={{ boxShadow: ['0 8px 25px rgba(196,149,106,0.3)', '0 12px 40px rgba(196,149,106,0.5)', '0 8px 25px rgba(196,149,106,0.3)'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}>
+              <Globe className="h-6 w-6 text-white" />
+            </motion.div>
+            <h2 className="text-base sm:text-lg font-bold">From retail experience to <span className="text-[#C4956A]">urban intelligence</span></h2>
+            <p className="mt-2 text-white/40 text-xs max-w-md mx-auto">UrbanThread AI transforms customer interactions into operational intelligence — Smart Commerce for smarter cities.</p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-1.5 text-[8px] font-semibold text-white/25">
+              {['AI-Powered', 'Zero Paper', 'Traceability', 'Automated', 'Sustainable', 'Smart City'].map((t) => (
+                <span key={t} className="px-2 py-0.5 rounded-full border border-white/10">{t}</span>
               ))}
             </div>
           </motion.div>
