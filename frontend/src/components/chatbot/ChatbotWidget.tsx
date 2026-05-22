@@ -140,38 +140,54 @@ export function ChatbotWidget() {
       recognition.maxAlternatives = 1;
 
       let silenceTimer: ReturnType<typeof setTimeout> | null = null;
+      let isSending = false;
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = Array.from(event.results)
-          .map(result => result[0].transcript)
-          .join('');
-        setInput(transcript);
+        if (isSending) return; // Prevent duplicate processing
+
+        // Build transcript only from current recognition session
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+
+        const displayText = finalTranscript || interimTranscript;
+        setInput(displayText);
 
         // Reset silence timer on each result
         if (silenceTimer) clearTimeout(silenceTimer);
 
         // If we have a final result, wait 1.5s of silence then send
-        if (event.results[event.results.length - 1].isFinal) {
+        if (finalTranscript) {
           silenceTimer = setTimeout(() => {
-            const finalText = transcript.trim();
-            if (finalText) {
+            const textToSend = finalTranscript.trim();
+            if (textToSend && !isSending) {
+              isSending = true;
               recognition.stop();
               setIsListening(false);
-              setTimeout(() => {
-                setInput('');
-                sendMessage(finalText);
-              }, 200);
+              setInput('');
+              sendMessage(textToSend);
+              // Reset after send
+              setTimeout(() => { isSending = false; }, 500);
             }
-          }, 1500); // Wait 1.5 seconds of silence before sending
+          }, 1500);
         }
       };
 
       recognition.onerror = () => {
         setIsListening(false);
+        isSending = false;
       };
 
       recognition.onend = () => {
         setIsListening(false);
+        isSending = false;
       };
 
       recognitionRef.current = recognition;
@@ -378,11 +394,11 @@ export function ChatbotWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-6 right-6 w-[360px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-3rem)]
+            className="fixed bottom-6 right-6 w-[380px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100vh-3rem)]
               rounded-2xl shadow-glass overflow-hidden flex flex-col
               border border-ut-surface-dark bg-ut-surface
-              mobile:w-[calc(100vw-1rem)] mobile:bottom-0 mobile:right-0 mobile:rounded-b-none mobile:h-[70vh]
-              tablet:w-[360px] tablet:bottom-6 tablet:right-6 tablet:rounded-2xl tablet:h-[520px]"
+              mobile:w-[calc(100vw-0.5rem)] mobile:bottom-0 mobile:right-0 mobile:left-0 mobile:mx-auto mobile:rounded-b-none mobile:h-[75vh] mobile:max-h-[75vh]
+              tablet:w-[380px] tablet:bottom-6 tablet:right-6 tablet:left-auto tablet:mx-0 tablet:rounded-2xl tablet:h-[540px]"
             style={{ zIndex: 'var(--z-chatbot)' }}
             role="dialog"
             aria-label="Chatbot UrbanThread AI"
