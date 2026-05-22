@@ -32,6 +32,9 @@ export function CartPanel() {
   const [authStep, setAuthStep] = useState<AuthModalStep>('options');
   const [authEmail, setAuthEmail] = useState('');
   const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
   const [clientInfo, setClientInfo] = useState<{ documentType: string; documentNumber: string; firstName: string; lastName: string } | null>(null);
   const [maskedEmail, setMaskedEmail] = useState('');
   const [devCode, setDevCode] = useState('');
@@ -95,6 +98,9 @@ export function CartPanel() {
     setAuthStep('options');
     setAuthEmail('');
     setAuthError('');
+    setAuthLoading(false);
+    setShowWelcome(false);
+    setWelcomeName('');
     setClientInfo(null);
     setMaskedEmail('');
     setDevCode('');
@@ -149,6 +155,7 @@ export function CartPanel() {
       return;
     }
     setAuthError('');
+    setAuthLoading(true);
     
     // Call the checkout-verify endpoint that authenticates by email directly
     fetch('/api/v1/auth/checkout-verify', {
@@ -158,6 +165,7 @@ export function CartPanel() {
     })
       .then(r => r.json())
       .then(res => {
+        setAuthLoading(false);
         if (res.status === 'error') {
           setAuthError(res.errors?.[0]?.message || 'Error al verificar');
           return;
@@ -166,24 +174,28 @@ export function CartPanel() {
           setAuthError(res.data?.message || 'No se encontró una cuenta con este correo. Regístrese primero o use la opción "Cliente".');
           return;
         }
-        // Client found — authenticate directly without OTP
+        // Client found — show welcome popup then authenticate
         const { client: foundClient, token, expiresIn } = res.data;
         setClientInfo(foundClient);
+        setWelcomeName(`${foundClient.firstName} ${foundClient.lastName}`);
+        setShowWelcome(true);
         
-        // Update auth store directly
-        const authStore = useAuthStore.getState();
-        authStore.loginClient(token, {
-          id: foundClient.id,
-          firstName: foundClient.firstName,
-          lastName: foundClient.lastName,
-          documentType: foundClient.documentType,
-          documentNumber: foundClient.documentNumber,
-          email: authEmail.trim(),
-        }, expiresIn * 1000);
-        
-        // Modal will close automatically via the useEffect that watches isReallyAuthenticated
+        // Authenticate after a brief welcome display
+        setTimeout(() => {
+          const authStore = useAuthStore.getState();
+          authStore.loginClient(token, {
+            id: foundClient.id,
+            firstName: foundClient.firstName,
+            lastName: foundClient.lastName,
+            documentType: foundClient.documentType,
+            documentNumber: foundClient.documentNumber,
+            email: authEmail.trim(),
+          }, expiresIn * 1000);
+          // Modal will close via useEffect after auth state updates
+        }, 2500);
       })
       .catch(() => {
+        setAuthLoading(false);
         setAuthError('Error de conexión. Intente nuevamente.');
       });
   }, [authEmail]);
@@ -453,8 +465,60 @@ export function CartPanel() {
             >
               <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
 
+                {/* ── WELCOME POPUP ── */}
+                {showWelcome && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="px-6 py-10 text-center"
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
+                      className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center mb-5 shadow-lg"
+                    >
+                      <CheckCircle className="h-8 w-8 text-white" />
+                    </motion.div>
+                    <motion.h3
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-xl font-bold text-stone-900 mb-2"
+                    >
+                      ¡Bienvenido/a!
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-lg font-semibold text-[#C4956A] mb-3"
+                    >
+                      {welcomeName}
+                    </motion.p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-sm text-stone-500"
+                    >
+                      Tu identidad ha sido verificada exitosamente.<br />
+                      Puedes proceder con tu pago.
+                    </motion.p>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="mt-6 flex items-center justify-center gap-2 text-xs text-emerald-600 font-medium"
+                    >
+                      <Lock className="h-3.5 w-3.5" />
+                      Sesión segura activa
+                    </motion.div>
+                  </motion.div>
+                )}
+
                 {/* ── STEP 1: Auth Options ── */}
-                {authStep === 'options' && (
+                {authStep === 'options' && !showWelcome && (
                   <>
                     <div className="relative px-6 pt-6 pb-4">
                       <button
@@ -515,10 +579,19 @@ export function CartPanel() {
                         />
                         <button
                           onClick={handleEmailSubmit}
-                          disabled={socialLookup.isPending}
-                          className="w-full py-3 rounded-xl bg-stone-100 text-stone-500 font-medium text-sm hover:bg-stone-200 hover:text-stone-700 transition-colors disabled:opacity-50"
+                          disabled={authLoading || !authEmail.trim()}
+                          className={`w-full py-3 rounded-xl font-medium text-sm transition-all duration-300 ${
+                            authEmail.trim()
+                              ? 'bg-[#2563EB] text-white hover:bg-[#1d4ed8] shadow-md hover:shadow-lg'
+                              : 'bg-stone-100 text-stone-400 cursor-not-allowed'
+                          } disabled:opacity-70`}
                         >
-                          {socialLookup.isPending ? 'Buscando...' : 'Iniciar sesión'}
+                          {authLoading ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Verificando...
+                            </span>
+                          ) : 'Iniciar sesión'}
                         </button>
                       </div>
 
@@ -556,7 +629,7 @@ export function CartPanel() {
                 )}
 
                 {/* ── STEP 2: Email Input (from Google/Apple) ── */}
-                {authStep === 'email-input' && (
+                {authStep === 'email-input' && !showWelcome && (
                   <>
                     <div className="relative px-6 pt-6 pb-4">
                       <button
@@ -639,7 +712,7 @@ export function CartPanel() {
                 )}
 
                 {/* ── STEP 3: OTP Verification ── */}
-                {authStep === 'otp-verify' && (
+                {authStep === 'otp-verify' && !showWelcome && (
                   <>
                     <div className="relative px-6 pt-6 pb-4">
                       <button
