@@ -199,7 +199,38 @@ export function ChatbotWidget() {
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Transform prices for speech: "COP $149.900" → "149 mil 900 pesos"
+    let spokenText = text
+      .replace(/COP\s*\$\s*([\d.]+)/g, (_match, price: string) => {
+        const num = parseInt(price.replace(/\./g, ''), 10);
+        if (isNaN(num)) return price + ' pesos';
+        if (num >= 1000000) {
+          const millions = Math.floor(num / 1000000);
+          const remainder = num % 1000000;
+          if (remainder === 0) return `${millions} millón${millions > 1 ? 'es' : ''} de pesos`;
+          const thousands = Math.floor(remainder / 1000);
+          const rest = remainder % 1000;
+          return `${millions} millón${millions > 1 ? 'es' : ''} ${thousands > 0 ? thousands + ' mil' : ''} ${rest > 0 ? rest : ''} pesos`.replace(/\s+/g, ' ').trim();
+        }
+        if (num >= 1000) {
+          const thousands = Math.floor(num / 1000);
+          const rest = num % 1000;
+          return `${thousands} mil ${rest > 0 ? rest + ' ' : ''}pesos`.trim();
+        }
+        return `${num} pesos`;
+      })
+      .replace(/\$\s*([\d.]+)/g, (_match, price: string) => {
+        const num = parseInt(price.replace(/\./g, ''), 10);
+        if (isNaN(num)) return price + ' pesos';
+        if (num >= 1000) {
+          const thousands = Math.floor(num / 1000);
+          const rest = num % 1000;
+          return `${thousands} mil ${rest > 0 ? rest + ' ' : ''}pesos`.trim();
+        }
+        return `${num} pesos`;
+      });
+
+    const utterance = new SpeechSynthesisUtterance(spokenText);
     utterance.lang = 'es-CO';
     utterance.rate = 0.92;  // Slower pace for clarity and warmth
     utterance.pitch = 1.4;  // Higher pitch for young, fresh female voice
