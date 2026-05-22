@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { AnimatedCounter } from '@/components/insights/AnimatedCounter';
 import { ExecutiveFunnelChart } from '@/components/insights';
+import { ExecutiveJourneyCard } from '@/components/insights/ExecutiveJourneyCard';
 import { funnelByPeriod } from '@/components/insights/insightsData';
 
 // ── Simulation Logic ──────────────────────────────────────────────────────────
@@ -135,30 +136,21 @@ export default function InsightsDemoPage() {
               </div>
             </motion.div>
 
-            {/* Timeline — 3 cols */}
+            {/* Journey Intelligence — 3 cols */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-              className="lg:col-span-3 p-6 rounded-2xl bg-white border border-stone-100/60 shadow-[0_2px_15px_rgba(0,0,0,0.04)]">
-              <h3 className="text-xs font-bold text-stone-800 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-teal-500" /> Journey
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { title: 'Visita web/mobile', icon: Eye, c: 'bg-blue-500' },
-                  { title: 'Zyla asesora (IA)', icon: MessageCircle, c: 'bg-violet-500' },
-                  { title: 'Solicitud digital', icon: FileText, c: 'bg-cyan-500' },
-                  { title: 'OTP verificado', icon: Shield, c: 'bg-rose-500' },
-                  { title: 'Pedido generado', icon: ShoppingBag, c: 'bg-[#C4956A]' },
-                  { title: 'Trazabilidad 100%', icon: Layers, c: 'bg-amber-500' },
-                  { title: 'Impacto medido', icon: Leaf, c: 'bg-emerald-500' },
-                ].map((s, i) => (
-                  <motion.div key={s.title} initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.06 }}
-                    className="flex items-center gap-2.5">
-                    <div className={`p-1.5 rounded-md ${s.c}`}><s.icon className="h-3 w-3 text-white" /></div>
-                    <span className="text-[10px] font-medium text-stone-700">{s.title}</span>
-                    {i < 6 && <div className="flex-1 h-px bg-stone-100" />}
-                  </motion.div>
-                ))}
-              </div>
+              className="lg:col-span-3">
+              <ExecutiveJourneyCard
+                visits={visits}
+                zylaInteractions={Math.round(visits * 0.35)}
+                requests={Math.round(r.orders * 0.52)}
+                orders={r.orders}
+                traceabilityRate={r.trace}
+                co2Avoided={r.co2}
+                docsAvoided={r.docs}
+                aiEnabled={ai}
+                paperlessEnabled={paper}
+                ecoPackaging={eco}
+              />
             </motion.div>
           </div>
         </div>
