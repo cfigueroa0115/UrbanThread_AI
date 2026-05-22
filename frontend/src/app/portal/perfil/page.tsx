@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   User, MapPin, Mail, Phone, Star, FileText, Eye, Download, FolderOpen,
-  Shield, Calendar, Hash, CloudSnow, Cloud, Sun, Thermometer,
+  Shield, Calendar, Hash, CloudSnow, Cloud, Sun, Thermometer, MessageCircle,
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -448,6 +448,60 @@ export default function PerfilPage() {
               </div>
             </div>
           </motion.div>
+        )}
+
+        {/* ═══ LOOK RECOMENDADO PARA HOY — CTAs + Zyla ═══ */}
+        {suggestion && weather && (
+          <div className="mx-6 mt-4 space-y-4">
+            {/* Section title with badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-sm font-bold text-stone-800">Look Recomendado para Hoy</h3>
+              <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#C4956A]/10 text-[#8B6F5E] border border-[#C4956A]/20">
+                Ideal para {Math.round(weather.temp)}°C
+              </span>
+              <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Smart Match
+              </span>
+              {tier === 'platinum' || tier === 'gold' ? (
+                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                  Cliente {tierLabels[tier]}
+                </span>
+              ) : null}
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-2">
+              <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors shadow-sm">
+                <Eye className="h-3.5 w-3.5" /> Ver look completo
+              </button>
+              <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 text-stone-700 text-xs font-semibold hover:border-[#C4956A] hover:text-[#C4956A] transition-colors">
+                <Star className="h-3.5 w-3.5" /> Ver otras opciones
+              </button>
+            </div>
+
+            {/* Zyla Fashion Assistant */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50/60 to-indigo-50/30 border border-violet-100/40">
+              <div className="flex items-center gap-2 mb-2.5">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm">
+                  <MessageCircle className="h-3 w-3 text-white" />
+                </div>
+                <span className="text-[11px] font-bold text-violet-800">Pregúntale a Zyla</span>
+                <span className="text-[9px] text-violet-500">Fashion Assistant</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  `Zyla, recomiéndame un look para ${Math.round(weather.temp)}°C`,
+                  'Zyla, muéstrame algo casual y fresco',
+                  'Zyla, recomiéndame algo sostenible',
+                  `Zyla, qué me pongo hoy en ${primaryAddr?.city ?? 'mi ciudad'}`,
+                ].map((prompt) => (
+                  <button key={prompt} className="text-[10px] px-2.5 py-1.5 rounded-lg bg-white/80 border border-violet-100 text-violet-700 hover:bg-violet-50 hover:border-violet-200 transition-colors truncate max-w-[200px]">
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Tabs */}
