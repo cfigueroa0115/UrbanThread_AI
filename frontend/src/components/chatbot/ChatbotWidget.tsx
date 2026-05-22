@@ -135,58 +135,69 @@ export function ChatbotWidget() {
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.lang = 'es-CO';
-      recognition.continuous = true;
+      recognition.continuous = false; // Single utterance mode — prevents duplication on mobile
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 
       let silenceTimer: ReturnType<typeof setTimeout> | null = null;
       let isSending = false;
+      let accumulatedFinal = '';
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
-        if (isSending) return; // Prevent duplicate processing
+        if (isSending) return;
 
-        // Build transcript only from current recognition session
-        let finalTranscript = '';
-        let interimTranscript = '';
-        for (let i = 0; i < event.results.length; i++) {
+        // Only read from resultIndex onwards to avoid re-reading old results
+        let currentInterim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
           if (result.isFinal) {
-            finalTranscript += result[0].transcript;
+            accumulatedFinal += result[0].transcript;
           } else {
-            interimTranscript += result[0].transcript;
+            currentInterim += result[0].transcript;
           }
         }
 
-        const displayText = finalTranscript || interimTranscript;
-        setInput(displayText);
+        // Display: show accumulated final + current interim
+        const displayText = (accumulatedFinal + currentInterim).trim();
+        if (displayText) setInput(displayText);
 
-        // Reset silence timer on each result
+        // Reset silence timer
         if (silenceTimer) clearTimeout(silenceTimer);
 
-        // If we have a final result, wait 1.5s of silence then send
-        if (finalTranscript) {
+        // When we get a final result, wait briefly then send
+        if (accumulatedFinal) {
           silenceTimer = setTimeout(() => {
-            const textToSend = finalTranscript.trim();
+            const textToSend = accumulatedFinal.trim();
             if (textToSend && !isSending) {
               isSending = true;
-              recognition.stop();
+              try { recognition.stop(); } catch { /* ignore */ }
               setIsListening(false);
               setInput('');
               sendMessage(textToSend);
-              // Reset after send
+              accumulatedFinal = '';
               setTimeout(() => { isSending = false; }, 500);
             }
-          }, 1500);
+          }, 1200);
         }
       };
 
       recognition.onerror = () => {
         setIsListening(false);
         isSending = false;
+        accumulatedFinal = '';
       };
 
       recognition.onend = () => {
         setIsListening(false);
+        // If there's accumulated text that wasn't sent yet, send it
+        if (accumulatedFinal.trim() && !isSending) {
+          isSending = true;
+          const textToSend = accumulatedFinal.trim();
+          setInput('');
+          sendMessage(textToSend);
+          accumulatedFinal = '';
+          setTimeout(() => { isSending = false; }, 500);
+        }
         isSending = false;
       };
 
