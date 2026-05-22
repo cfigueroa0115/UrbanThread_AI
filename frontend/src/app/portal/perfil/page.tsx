@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 import {
   User, MapPin, Mail, Phone, Star, FileText, Eye, Download, FolderOpen,
   Shield, Calendar, Hash, CloudSnow, Cloud, Sun, Thermometer, MessageCircle,
+  ShoppingCart, RefreshCw, X as XIcon, Sparkles,
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Spinner, LoadingOverlay } from '@/components/ui/Spinner';
 import { useAuthStore } from '@/stores/auth.store';
+import { useChatbotStore } from '@/stores/chatbot.store';
 import { apiClient } from '@/lib/api-client';
 
 type TabId = 'personal' | 'addresses' | 'contact' | 'documents';
@@ -126,6 +128,169 @@ function getSuggestion(temp: number): WeatherSuggestion {
       '/images/accesorios-1.jpg',
     ],
   };
+}
+
+// ── Look Recomendado Module (Functional) ──────────────────────────────────────
+
+interface LookModuleProps {
+  suggestion: WeatherSuggestion;
+  weather: { temp: number };
+  tier: string;
+  tierLabel: string;
+  city: string;
+  clientName: string;
+}
+
+function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, clientName }: LookModuleProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [currentLookIndex, setCurrentLookIndex] = useState(0);
+  const [loadingAlt, setLoadingAlt] = useState(false);
+  const { toggle: toggleZyla, sendMessage: sendToZyla, isOpen: zylaOpen } = useChatbotStore();
+
+  // Alternative looks based on same temperature
+  const allLooks = [
+    { name: suggestion.label, items: suggestion.items, images: suggestion.images, style: 'Recomendado' },
+    { name: 'Look Casual', items: ['Camiseta Oversize Eco', 'Jeans Relaxed Fit', 'Sneakers Urban'], images: ['/images/blusas-1.jpg', '/images/jeans-1.jpg', '/images/zapatos-2.jpg'], style: 'Casual' },
+    { name: 'Look Sostenible', items: ['Blusa Algodón Orgánico', 'Falda Midi Reciclada', 'Bolso Eco-Leather'], images: ['/images/blusas-2.jpg', '/images/faldas-2.jpg', '/images/accesorios-1.jpg'], style: 'Sostenible' },
+    { name: 'Look Premium', items: ['Vestido Elegance Midi', 'Tacones Artesanales', 'Collar Statement'], images: ['/images/vestidos-1.jpg', '/images/zapatos-1.jpg', '/images/accesorios-gafas-1.jpg'], style: 'Premium' },
+  ];
+
+  const currentLook = allLooks[currentLookIndex];
+
+  const handleVerOtras = () => {
+    setLoadingAlt(true);
+    setTimeout(() => {
+      setCurrentLookIndex((prev) => (prev + 1) % allLooks.length);
+      setLoadingAlt(false);
+    }, 600);
+  };
+
+  const openZylaWithPrompt = (prompt: string) => {
+    // Open Zyla if not already open
+    if (!zylaOpen) toggleZyla();
+    // Send the message after a brief delay to ensure widget is open
+    setTimeout(() => { sendToZyla(prompt); }, 300);
+  };
+
+  const handleAskZyla = () => {
+    const prompt = `Hola Zyla, soy ${clientName}. Estoy en ${city} con ${Math.round(weather.temp)}°C. Soy cliente ${tierLabel}. Recomiéndame un look para hoy.`;
+    openZylaWithPrompt(prompt);
+  };
+
+  return (
+    <>
+      <div className="mx-6 mt-4 space-y-4">
+        {/* Section title with badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-sm font-bold text-stone-800">Look Recomendado para Hoy</h3>
+          <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#C4956A]/10 text-[#8B6F5E] border border-[#C4956A]/20">
+            Ideal para {Math.round(weather.temp)}°C
+          </span>
+          <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            {currentLook.style}
+          </span>
+          {(tier === 'platinum' || tier === 'gold') && (
+            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+              Cliente {tierLabel}
+            </span>
+          )}
+        </div>
+
+        {/* CTAs — FUNCTIONAL */}
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors shadow-sm active:scale-95">
+            <Eye className="h-3.5 w-3.5" /> Ver look completo
+          </button>
+          <button onClick={handleVerOtras} disabled={loadingAlt}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 text-stone-700 text-xs font-semibold hover:border-[#C4956A] hover:text-[#C4956A] transition-colors active:scale-95 disabled:opacity-50">
+            {loadingAlt ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Star className="h-3.5 w-3.5" />}
+            {loadingAlt ? 'Cargando...' : 'Ver otras opciones'}
+          </button>
+        </div>
+
+        {/* Zyla Fashion Assistant — FUNCTIONAL */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50/60 to-indigo-50/30 border border-violet-100/40">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm">
+                <MessageCircle className="h-3 w-3 text-white" />
+              </div>
+              <span className="text-[11px] font-bold text-violet-800">Pregúntale a Zyla</span>
+            </div>
+            <button onClick={handleAskZyla}
+              className="text-[10px] font-semibold text-violet-600 hover:text-violet-800 transition-colors flex items-center gap-1">
+              <Sparkles className="h-3 w-3" /> Abrir asistente
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              `Zyla, recomiéndame un look para ${Math.round(weather.temp)}°C en ${city}`,
+              'Zyla, muéstrame algo casual y fresco',
+              'Zyla, recomiéndame algo sostenible',
+              `Zyla, soy ${clientName}, qué me pongo hoy`,
+            ].map((prompt) => (
+              <button key={prompt} onClick={() => openZylaWithPrompt(prompt)}
+                className="text-[10px] px-2.5 py-1.5 rounded-lg bg-white/80 border border-violet-100 text-violet-700 hover:bg-violet-50 hover:border-violet-200 transition-colors truncate max-w-[220px] active:scale-95">
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ LOOK DETAIL MODAL ═══ */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+            className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2D2D2D] p-5 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-white/50 uppercase tracking-wider">Look Completo</p>
+                  <h3 className="text-lg font-bold">{currentLook.name}</h3>
+                  <p className="text-xs text-white/60 mt-0.5">{city} · {Math.round(weather.temp)}°C · {currentLook.style}</p>
+                </div>
+                <button onClick={() => setShowModal(false)} className="p-2 rounded-full hover:bg-white/10 transition-colors">
+                  <XIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            {/* Products */}
+            <div className="p-5 space-y-3">
+              {currentLook.items.map((item, idx) => (
+                <div key={item} className="flex items-center gap-3 p-3 rounded-xl bg-stone-50 border border-stone-100">
+                  <img src={currentLook.images[idx]} alt={item} className="w-14 h-14 rounded-xl object-cover shadow-sm" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-stone-800">{item}</p>
+                    <p className="text-xs text-stone-400">Disponible · Envío gratis</p>
+                  </div>
+                  <p className="text-sm font-bold text-[#C4956A]">${(79900 + idx * 30000).toLocaleString()}</p>
+                </div>
+              ))}
+              {/* Total */}
+              <div className="flex items-center justify-between pt-3 border-t border-stone-200">
+                <span className="text-sm font-bold text-stone-800">Total del look</span>
+                <span className="text-lg font-black text-[#C4956A]">${(79900 + 109900 + 139900).toLocaleString()}</span>
+              </div>
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <button onClick={() => { setShowModal(false); handleAskZyla(); }}
+                  className="flex-1 py-2.5 rounded-xl border border-violet-200 text-violet-700 text-xs font-semibold hover:bg-violet-50 transition-colors flex items-center justify-center gap-1.5">
+                  <MessageCircle className="h-3.5 w-3.5" /> Preguntar a Zyla
+                </button>
+                <button className="flex-1 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors flex items-center justify-center gap-1.5">
+                  <ShoppingCart className="h-3.5 w-3.5" /> Agregar al carrito
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function PerfilPage() {
@@ -450,58 +615,16 @@ export default function PerfilPage() {
           </motion.div>
         )}
 
-        {/* ═══ LOOK RECOMENDADO PARA HOY — CTAs + Zyla ═══ */}
+        {/* ═══ LOOK RECOMENDADO PARA HOY — FUNCIONAL ═══ */}
         {suggestion && weather && (
-          <div className="mx-6 mt-4 space-y-4">
-            {/* Section title with badges */}
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-bold text-stone-800">Look Recomendado para Hoy</h3>
-              <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#C4956A]/10 text-[#8B6F5E] border border-[#C4956A]/20">
-                Ideal para {Math.round(weather.temp)}°C
-              </span>
-              <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Smart Match
-              </span>
-              {tier === 'platinum' || tier === 'gold' ? (
-                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-                  Cliente {tierLabels[tier]}
-                </span>
-              ) : null}
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-2">
-              <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors shadow-sm">
-                <Eye className="h-3.5 w-3.5" /> Ver look completo
-              </button>
-              <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 text-stone-700 text-xs font-semibold hover:border-[#C4956A] hover:text-[#C4956A] transition-colors">
-                <Star className="h-3.5 w-3.5" /> Ver otras opciones
-              </button>
-            </div>
-
-            {/* Zyla Fashion Assistant */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50/60 to-indigo-50/30 border border-violet-100/40">
-              <div className="flex items-center gap-2 mb-2.5">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm">
-                  <MessageCircle className="h-3 w-3 text-white" />
-                </div>
-                <span className="text-[11px] font-bold text-violet-800">Pregúntale a Zyla</span>
-                <span className="text-[9px] text-violet-500">Fashion Assistant</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  `Zyla, recomiéndame un look para ${Math.round(weather.temp)}°C`,
-                  'Zyla, muéstrame algo casual y fresco',
-                  'Zyla, recomiéndame algo sostenible',
-                  `Zyla, qué me pongo hoy en ${primaryAddr?.city ?? 'mi ciudad'}`,
-                ].map((prompt) => (
-                  <button key={prompt} className="text-[10px] px-2.5 py-1.5 rounded-lg bg-white/80 border border-violet-100 text-violet-700 hover:bg-violet-50 hover:border-violet-200 transition-colors truncate max-w-[200px]">
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          <LookRecomendadoModule
+            suggestion={suggestion}
+            weather={weather}
+            tier={tier}
+            tierLabel={tierLabels[tier]}
+            city={primaryAddr?.city ?? 'tu ciudad'}
+            clientName={data.firstName}
+          />
         )}
 
         {/* Tabs */}
