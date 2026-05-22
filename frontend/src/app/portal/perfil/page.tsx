@@ -147,15 +147,16 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
   const [loadingAlt, setLoadingAlt] = useState(false);
   const { toggle: toggleZyla, sendMessage: sendToZyla, isOpen: zylaOpen } = useChatbotStore();
 
-  // Alternative looks based on same temperature
+  // Alternative looks with COP prices
   const allLooks = [
-    { name: suggestion.label, items: suggestion.items, images: suggestion.images, style: 'Recomendado' },
-    { name: 'Look Casual', items: ['Camiseta Oversize Eco', 'Jeans Relaxed Fit', 'Sneakers Urban'], images: ['/images/blusas-1.jpg', '/images/jeans-1.jpg', '/images/zapatos-2.jpg'], style: 'Casual' },
-    { name: 'Look Sostenible', items: ['Blusa Algodón Orgánico', 'Falda Midi Reciclada', 'Bolso Eco-Leather'], images: ['/images/blusas-2.jpg', '/images/faldas-2.jpg', '/images/accesorios-1.jpg'], style: 'Sostenible' },
-    { name: 'Look Premium', items: ['Vestido Elegance Midi', 'Tacones Artesanales', 'Collar Statement'], images: ['/images/vestidos-1.jpg', '/images/zapatos-1.jpg', '/images/accesorios-gafas-1.jpg'], style: 'Premium' },
+    { name: suggestion.label, items: suggestion.items, images: suggestion.images, style: 'Recomendado', prices: [129900, 189900, 219900] },
+    { name: 'Look Casual', items: ['Camiseta Oversize Eco', 'Jeans Relaxed Fit', 'Sneakers Urban'], images: ['/images/blusas-1.jpg', '/images/jeans-1.jpg', '/images/zapatos-2.jpg'], style: 'Casual', prices: [89900, 159900, 199900] },
+    { name: 'Look Sostenible', items: ['Blusa Algodón Orgánico', 'Falda Midi Reciclada', 'Bolso Eco-Leather'], images: ['/images/blusas-2.jpg', '/images/faldas-2.jpg', '/images/accesorios-1.jpg'], style: 'Sostenible', prices: [109900, 149900, 179900] },
+    { name: 'Look Premium', items: ['Vestido Elegance Midi', 'Tacones Artesanales', 'Collar Statement'], images: ['/images/vestidos-1.jpg', '/images/zapatos-1.jpg', '/images/accesorios-gafas-1.jpg'], style: 'Premium', prices: [199900, 249900, 89900] },
   ];
 
   const currentLook = allLooks[currentLookIndex];
+  const lookTotal = currentLook.prices.reduce((a, b) => a + b, 0);
 
   const handleVerOtras = () => {
     setLoadingAlt(true);
@@ -166,32 +167,30 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
   };
 
   const openZylaWithPrompt = (prompt: string) => {
-    // Open Zyla if not already open
     if (!zylaOpen) toggleZyla();
-    // Send the message after a brief delay to ensure widget is open
     setTimeout(() => { sendToZyla(prompt); }, 300);
   };
 
   const handleAskZyla = () => {
-    const prompt = `Hola Zyla, soy ${clientName}. Estoy en ${city} con ${Math.round(weather.temp)}°C. Soy cliente ${tierLabel}. Recomiéndame un look para hoy.`;
+    const prompt = `Hola Zyla, soy ${clientName}. Estoy en ${city} con ${Math.round(weather.temp)}°C. Soy cliente ${tierLabel}. Recomiéndame un look para hoy con precios en COP.`;
     openZylaWithPrompt(prompt);
   };
 
   return (
     <>
       <div className="mx-6 mt-4 space-y-4">
-        {/* Section title with badges */}
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-sm font-bold text-stone-800">Look Recomendado para Hoy</h3>
-          <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-[#C4956A]/10 text-[#8B6F5E] border border-[#C4956A]/20">
-            Ideal para {Math.round(weather.temp)}°C
+        {/* Section title with LARGER badges */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h3 className="text-base font-bold text-stone-900">Look Recomendado para Hoy</h3>
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-[#C4956A]/15 to-[#D4A76A]/10 text-[#8B6F5E] border border-[#C4956A]/30 shadow-sm">
+            🌡️ Ideal para {Math.round(weather.temp)}°C
           </span>
-          <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-            {currentLook.style}
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+            ✨ {currentLook.style}
           </span>
           {(tier === 'platinum' || tier === 'gold') && (
-            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-              Cliente {tierLabel}
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200 shadow-sm">
+              👑 Cliente {tierLabel}
             </span>
           )}
         </div>
@@ -199,39 +198,40 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
         {/* CTAs — FUNCTIONAL */}
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors shadow-sm active:scale-95">
-            <Eye className="h-3.5 w-3.5" /> Ver look completo
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-sm font-semibold hover:bg-[#C4956A] transition-colors shadow-md active:scale-95">
+            <Eye className="h-4 w-4" /> Ver look completo
           </button>
           <button onClick={handleVerOtras} disabled={loadingAlt}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 text-stone-700 text-xs font-semibold hover:border-[#C4956A] hover:text-[#C4956A] transition-colors active:scale-95 disabled:opacity-50">
-            {loadingAlt ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Star className="h-3.5 w-3.5" />}
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border-2 border-stone-200 text-stone-700 text-sm font-semibold hover:border-[#C4956A] hover:text-[#C4956A] transition-colors active:scale-95 disabled:opacity-50">
+            {loadingAlt ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4" />}
             {loadingAlt ? 'Cargando...' : 'Ver otras opciones'}
           </button>
         </div>
 
         {/* Zyla Fashion Assistant — FUNCTIONAL */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-violet-50/60 to-indigo-50/30 border border-violet-100/40">
-          <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-sm">
-                <MessageCircle className="h-3 w-3 text-white" />
+                <MessageCircle className="h-3.5 w-3.5 text-white" />
               </div>
-              <span className="text-[11px] font-bold text-violet-800">Pregúntale a Zyla</span>
+              <span className="text-xs font-bold text-violet-800">Pregúntale a Zyla</span>
+              <span className="text-[10px] text-violet-500 italic">Fashion Assistant</span>
             </div>
             <button onClick={handleAskZyla}
-              className="text-[10px] font-semibold text-violet-600 hover:text-violet-800 transition-colors flex items-center gap-1">
-              <Sparkles className="h-3 w-3" /> Abrir asistente
+              className="text-xs font-semibold text-white bg-violet-500 hover:bg-violet-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-sm active:scale-95">
+              <Sparkles className="h-3 w-3" /> Abrir
             </button>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {[
+              `Zyla, soy ${clientName}, qué me pongo hoy`,
               `Zyla, recomiéndame un look para ${Math.round(weather.temp)}°C en ${city}`,
               'Zyla, muéstrame algo casual y fresco',
               'Zyla, recomiéndame algo sostenible',
-              `Zyla, soy ${clientName}, qué me pongo hoy`,
             ].map((prompt) => (
               <button key={prompt} onClick={() => openZylaWithPrompt(prompt)}
-                className="text-[10px] px-2.5 py-1.5 rounded-lg bg-white/80 border border-violet-100 text-violet-700 hover:bg-violet-50 hover:border-violet-200 transition-colors truncate max-w-[220px] active:scale-95">
+                className="text-[11px] px-3 py-2 rounded-xl bg-white/90 border border-violet-100 text-violet-700 font-medium hover:bg-violet-50 hover:border-violet-300 transition-all truncate max-w-[240px] active:scale-95 shadow-sm">
                 {prompt}
               </button>
             ))}
@@ -267,13 +267,13 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
                     <p className="text-sm font-semibold text-stone-800">{item}</p>
                     <p className="text-xs text-stone-400">Disponible · Envío gratis</p>
                   </div>
-                  <p className="text-sm font-bold text-[#C4956A]">${(79900 + idx * 30000).toLocaleString()}</p>
+                  <p className="text-sm font-bold text-[#C4956A]">COP ${currentLook.prices[idx].toLocaleString()}</p>
                 </div>
               ))}
               {/* Total */}
               <div className="flex items-center justify-between pt-3 border-t border-stone-200">
                 <span className="text-sm font-bold text-stone-800">Total del look</span>
-                <span className="text-lg font-black text-[#C4956A]">${(79900 + 109900 + 139900).toLocaleString()}</span>
+                <span className="text-lg font-black text-[#C4956A]">COP ${lookTotal.toLocaleString()}</span>
               </div>
               {/* Actions */}
               <div className="flex gap-2 pt-2">
