@@ -98,10 +98,44 @@ export function Header({ variant, user, notifications = 0, onLogout, onToggleSid
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
                 const isSostenibilidad = link.href === '/sostenibilidad';
-                const activeColor = isSostenibilidad ? 'text-emerald-600' : 'text-[#C4956A]';
-                const activeBg = isSostenibilidad ? 'bg-emerald-500/10 shadow-[0_0_12px_rgba(16,185,129,0.3)]' : 'bg-[#C4956A]/10 shadow-[0_0_12px_rgba(196,149,106,0.3)]';
-                const activeBar = isSostenibilidad ? 'bg-gradient-to-r from-emerald-500 to-green-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-gradient-to-r from-[#C4956A] to-[#D4A76A] shadow-[0_0_8px_rgba(196,149,106,0.6)]';
-                const hoverColor = isSostenibilidad ? 'hover:text-emerald-600 hover:bg-emerald-500/5' : 'hover:text-[#C4956A] hover:bg-[#C4956A]/5';
+                const isInsights = link.href === '/insights';
+                const activeColor = isSostenibilidad ? 'text-emerald-600' : isInsights ? 'text-violet-600' : 'text-[#C4956A]';
+                const activeBg = isSostenibilidad ? 'bg-emerald-500/10 shadow-[0_0_12px_rgba(16,185,129,0.3)]' : isInsights ? 'bg-violet-500/10 shadow-[0_0_12px_rgba(139,92,246,0.3)]' : 'bg-[#C4956A]/10 shadow-[0_0_12px_rgba(196,149,106,0.3)]';
+                const activeBar = isSostenibilidad ? 'bg-gradient-to-r from-emerald-500 to-green-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : isInsights ? 'bg-gradient-to-r from-violet-500 to-indigo-500 shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'bg-gradient-to-r from-[#C4956A] to-[#D4A76A] shadow-[0_0_8px_rgba(196,149,106,0.6)]';
+                const hoverColor = isSostenibilidad ? 'hover:text-emerald-600 hover:bg-emerald-500/5' : isInsights ? 'hover:text-violet-600 hover:bg-violet-500/5' : 'hover:text-[#C4956A] hover:bg-[#C4956A]/5';
+
+                // Special Insights link with glow animation
+                if (isInsights) {
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? `${activeColor} ${activeBg}`
+                          : 'text-violet-600 hover:bg-violet-500/5'
+                      }`}
+                      style={{ animation: isActive ? undefined : 'insightsPulse 2.5s ease-in-out infinite' }}
+                    >
+                      {/* Animated glow background */}
+                      <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-violet-500/10 via-indigo-500/5 to-purple-500/10 animate-pulse opacity-60" />
+                      {/* Shimmer sweep */}
+                      <span className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none">
+                        <span className="absolute inset-0 animate-[shimmer_3s_ease-in-out_infinite]" style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(139,92,246,0.15) 50%, transparent 60%)', animation: 'shimmer 3s ease-in-out infinite' }} />
+                      </span>
+                      {link.icon && <link.icon className="relative h-3.5 w-3.5" strokeWidth={2.5} />}
+                      <span className="relative font-bold">{link.label}</span>
+                      {/* Live dot */}
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
+                      </span>
+                      {isActive && (
+                        <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full ${activeBar}`} />
+                      )}
+                    </Link>
+                  );
+                }
 
                 return (
                   <Link

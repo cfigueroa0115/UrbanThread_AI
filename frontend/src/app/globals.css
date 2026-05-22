@@ -258,3 +258,14 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
+
+/* ── Insights nav button shimmer animation ──────────────────────────────── */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes insightsPulse {
+  0%, 100% { box-shadow: 0 0 0px rgba(139,92,246,0); }
+  50% { box-shadow: 0 0 12px rgba(139,92,246,0.2); }
+}
