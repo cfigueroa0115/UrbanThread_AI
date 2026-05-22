@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Spinner, LoadingOverlay } from '@/components/ui/Spinner';
 import { useAuthStore } from '@/stores/auth.store';
 import { useChatbotStore } from '@/stores/chatbot.store';
+import { useCartStore } from '@/stores/cart.store';
 import { apiClient } from '@/lib/api-client';
 
 type TabId = 'personal' | 'addresses' | 'contact' | 'documents';
@@ -145,7 +146,9 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
   const [showModal, setShowModal] = useState(false);
   const [currentLookIndex, setCurrentLookIndex] = useState(0);
   const [loadingAlt, setLoadingAlt] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
   const { toggle: toggleZyla, sendMessage: sendToZyla, isOpen: zylaOpen } = useChatbotStore();
+  const { addItem, openCart } = useCartStore();
 
   // Alternative looks with COP prices
   const allLooks = [
@@ -281,8 +284,37 @@ function LookRecomendadoModule({ suggestion, weather, tier, tierLabel, city, cli
                   className="flex-1 py-2.5 rounded-xl border border-violet-200 text-violet-700 text-xs font-semibold hover:bg-violet-50 transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-3.5 w-3.5" /> Preguntar a Zyla
                 </button>
-                <button className="flex-1 py-2.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-[#C4956A] transition-colors flex items-center justify-center gap-1.5">
-                  <ShoppingCart className="h-3.5 w-3.5" /> Agregar al carrito
+                <button
+                  onClick={() => {
+                    // Add all items from the current look to cart
+                    currentLook.items.forEach((item, idx) => {
+                      addItem({
+                        id: `look-${currentLookIndex}-${idx}-${item.replace(/\s/g, '-').toLowerCase()}`,
+                        name: item,
+                        price: currentLook.prices[idx],
+                        image: currentLook.images[idx],
+                      });
+                    });
+                    setAddedToCart(true);
+                    // Close modal and open cart after brief feedback
+                    setTimeout(() => {
+                      setShowModal(false);
+                      setAddedToCart(false);
+                      openCart();
+                    }, 1200);
+                  }}
+                  disabled={addedToCart}
+                  className={`flex-1 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    addedToCart
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-[#1A1A1A] text-white hover:bg-[#C4956A]'
+                  }`}
+                >
+                  {addedToCart ? (
+                    <><Shield className="h-3.5 w-3.5" /> ¡Agregado!</>
+                  ) : (
+                    <><ShoppingCart className="h-3.5 w-3.5" /> Agregar al carrito</>
+                  )}
                 </button>
               </div>
             </div>
