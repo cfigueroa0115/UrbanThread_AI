@@ -100,13 +100,21 @@ export async function POST(req: NextRequest) {
           const aiContent = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
 
           if (aiContent) {
+            // Ensure response always ends with the closing phrase
+            let finalContent = aiContent.trim();
+            const closingPhrase = '¿Puedo ayudarte en algo más?';
+            const hasClosing = finalContent.toLowerCase().includes('puedo ayudarte') || finalContent.toLowerCase().includes('algo más');
+            if (!hasClosing) {
+              finalContent = finalContent.replace(/[.!?]?\s*$/, '. ') + closingPhrase;
+            }
+
             return NextResponse.json({
               status: 'success',
               data: {
                 message: {
                   id: crypto.randomUUID(),
                   role: 'assistant',
-                  content: aiContent.trim(),
+                  content: finalContent,
                   createdAt: new Date().toISOString(),
                 },
                 conversationId,
